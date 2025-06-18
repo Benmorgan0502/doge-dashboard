@@ -1,55 +1,36 @@
-# DOGE Government Efficiency Dashboard
+# 🏛️ DOGE Government Efficiency Dashboard
 
-A comprehensive Streamlit dashboard for analyzing government contracts, grants, leases, and payments data from the Department of Government Efficiency (DOGE) API.
-
-## 🎯 Overview
-
-This dashboard provides interactive analysis of government efficiency data, including:
-- **Contracts**: Contract terminations and savings
-- **Grants**: Grant analysis and impact modeling  
-- **Leases**: Property lease terminations and cost efficiency
-- **Payments**: Government payment analysis and anomaly detection
+A comprehensive interactive dashboard analyzing Department of Government Efficiency (DOGE) data including contracts, grants, leases, and payments.
 
 ## 🚀 Live Demo
+[**View Dashboard**](https://your-actual-streamlit-url-here.streamlit.app)
 
-**[View Dashboard](https://your-username-doge-dashboard-app-xyz123.streamlit.app)** *(Link will be available after deployment)*
+## 🎓 Academic Project
+MBA Capstone Project - Fairfield University Business Analytics Program
 
 ## 📊 Features
-
-### Contracts Analysis
-- Agency performance tracking
-- Contract status distribution
-- Savings analysis over time
-- Vendor analysis
-- Outlier detection using machine learning
-
-### Grants Analysis  
-- Agency grant distribution
-- Recipient analysis
-- Grant impact classification model
-- Missing information detection
-
-### Leases Analysis
-- Geographic analysis by state/city
-- Cost efficiency (cost per sq ft)
-- Property size analysis
-- Timeline trends
-- Savings rate analysis
-
-### Payments Analysis
-- Payment timeline analysis
-- Agency spending patterns
-- Payment type distribution
-- Anomaly detection
-- Financial analysis
+- Real-time government efficiency data analysis
+- Interactive visualizations and filtering  
+- Machine learning outlier detection
+- Professional executive-ready presentations
+- Mobile-responsive design
 
 ## 🛠️ Technology Stack
-
 - **Frontend**: Streamlit
 - **Data Processing**: Pandas, NumPy
 - **Visualizations**: Plotly
 - **Machine Learning**: Scikit-learn
 - **Data Source**: DOGE API
+
+## 📈 Analysis Capabilities
+- Contract termination analysis
+- Grant impact assessment
+- Lease cost efficiency evaluation
+- Payment anomaly detection
+- Cross-agency benchmarking
+
+---
+*This dashboard demonstrates advanced data analytics, visualization design, and professional presentation standards for government efficiency analysis.*
 
 ## 🏃‍♂️ Running Locally
 
