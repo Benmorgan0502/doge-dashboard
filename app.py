@@ -211,7 +211,7 @@ def render_enhanced_homepage(datasets=None):
     # Hero Section with enhanced styling
     st.markdown("""
     <div class="hero-section" style="text-align: center; padding: 2rem 0; background: linear-gradient(135deg, #1f77b4 0%, #005bbb 100%); border-radius: 15px; margin-bottom: 2rem; color: white; box-shadow: 0 8px 16px rgba(0,0,0,0.1);">
-        <h1 style="font-size: 3rem; margin-bottom: 1rem; font-weight: 700;">🏛️ DOGE Government Efficiency Dashboard</h1>
+        <h1 style="font-size: 3rem; margin-bottom: 1rem; font-weight: 700;">🏛️ DOGE DATA DASHBOARD</h1>
         <p style="font-size: 1.3rem; margin-bottom: 1.5rem; opacity: 0.9;">
             Comprehensive Analysis of Department of Government Efficiency Data
         </p>
@@ -497,9 +497,6 @@ def render_enhanced_homepage(datasets=None):
             **Q: Can I export the analysis results?**
             A: Yes! Each section has CSV download buttons for filtered data. Charts can be exported as images.
             
-            **Q: What's the academic rigor behind this analysis?**
-            A: This MBA capstone project follows academic standards with documented methodology, bias checks, and transparent data sources.
-            
             **Q: How do I interpret the efficiency metrics?**
             A: Efficiency rates compare savings to total contract/lease values. Higher percentages indicate better cost optimization.
             
@@ -555,7 +552,7 @@ def render_enhanced_homepage(datasets=None):
     st.markdown("### 🎓 Academic Excellence & Professional Standards")
     
     st.info("""
-    **MBA Capstone Project - Fairfield University Dolan School of Business**
+    **MSBA Capstone Project - Fairfield University Dolan School of Business**
     
     **Project Objectives:**
     ✅ Demonstrate advanced data visualization and interactive dashboard development  
@@ -564,7 +561,6 @@ def render_enhanced_homepage(datasets=None):
     ✅ Showcase professional-grade analytical capabilities for career advancement  
     
     **Academic Standards Maintained:**
-    - Rigorous methodology documentation and peer review process
     - Ethical data handling with privacy protection measures
     - Bias-free analysis with transparent limitation acknowledgments
     - Professional presentation suitable for stakeholder engagement
@@ -622,7 +618,7 @@ def render_enhanced_homepage(datasets=None):
     st.markdown("""
     <div style="text-align: center; color: #666; font-size: 0.9rem; padding: 2rem; background: #f8f9fa; border-radius: 10px;">
         <h4 style="color: #333; margin-bottom: 1rem;">Government Efficiency Dashboard</h4>
-        <p><strong>Fairfield University Dolan School of Business</strong> | MBA Business Analytics Program | 2025</p>
+        <p><strong>Fairfield University Dolan School of Business</strong> | MSBA Program | 2025</p>
         <p>Data sourced from DOGE API • Educational and research purposes • Public domain government data</p>
         <p style="margin-top: 1rem; font-size: 0.8rem;">
             <strong>Technical Stack:</strong> Streamlit • Plotly • Pandas • Scikit-learn • Python 3.11<br>
