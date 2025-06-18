@@ -6,7 +6,7 @@ A comprehensive interactive dashboard analyzing Department of Government Efficie
 [**View Dashboard**](https://your-actual-streamlit-url-here.streamlit.app)
 
 ## 🎓 Academic Project
-MBA Capstone Project - Fairfield University Business Analytics Program
+MSBA Capstone Project - Fairfield University Business Analytics Program
 
 ## 📊 Features
 - Real-time government efficiency data analysis
