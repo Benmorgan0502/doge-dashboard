@@ -81,33 +81,6 @@ def get_homepage_stats(datasets):
     
     return stats
 
-def create_sparkline_chart(data, title, color="#1f77b4"):
-    """Create a small sparkline chart for the homepage"""
-    if len(data) == 0:
-        # Create dummy data for demo
-        data = [10, 15, 13, 17, 20, 18, 25, 22, 28, 30]
-    
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        y=data,
-        mode='lines',
-        line=dict(color=color, width=2),
-        fill='tonexty',
-        fillcolor=f'rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.1)'
-    ))
-    
-    fig.update_layout(
-        height=60,
-        margin=dict(l=0, r=0, t=0, b=0),
-        showlegend=False,
-        xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
-        yaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)'
-    )
-    
-    return fig
-
 def render_data_freshness_indicator():
     """Render a data freshness indicator"""
     # Simulate data age (you'd calculate this from actual cache timestamps)
@@ -168,9 +141,9 @@ def render_quick_tour():
             """)
 
 def render_enhanced_homepage(datasets=None):
-    """Render the enhanced homepage with fixed styling"""
+    """Render the enhanced homepage with DOGE emblem and corrected text"""
     
-    # Add improved CSS
+    # Add improved CSS with fixed card title colors
     st.markdown("""
     <style>
     @media (max-width: 768px) {
@@ -221,21 +194,54 @@ def render_enhanced_homepage(datasets=None):
         color: #555 !important;
     }
     
-    /* Style the metrics better */
+    /* Style the metrics better - FIXED TITLE COLORS */
     .metric-container {
         background: white;
         border-radius: 10px;
-        padding: 1rem;
+        padding: 1.5rem;
         margin: 0.5rem 0;
         border-left: 4px solid #1f77b4;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .metric-container h3 {
+        color: #333 !important;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .metric-container h2 {
+        margin: 0.5rem 0;
+        font-weight: 700;
+        font-size: 2rem;
+    }
+    
+    .metric-container p {
+        color: #666 !important;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+    
+    .doge-emblem {
+        width: 80px;
+        height: 80px;
+        margin-right: 1rem;
+        border-radius: 50%;
+        background: #d4af37;
+        display: inline-block;
+        vertical-align: middle;
     }
     </style>
     """, unsafe_allow_html=True)
     
-    # Hero Section with enhanced styling
+    # Hero Section with DOGE emblem
     st.markdown("""
     <div class="hero-section" style="text-align: center; padding: 2rem 0; background: linear-gradient(135deg, #1f77b4 0%, #005bbb 100%); border-radius: 15px; margin-bottom: 2rem; color: white; box-shadow: 0 8px 16px rgba(0,0,0,0.1);">
-        <h1 style="font-size: 3rem; margin-bottom: 1rem; font-weight: 700;">🏛️ DOGE Government Efficiency Dashboard</h1>
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+            <div style="width: 80px; height: 80px; background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNkNGFmMzciLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+CjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjI4IiBmaWxsPSIjZjBmMGYwIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIvPgo8IS0tIERvZ2UgSGVhZCAtLT4KPGNpcmNsZSBjeD0iMzAiIGN5PSIyNSIgcj0iMTIiIGZpbGw9IiNmZGQ5MzUiLz4KPCEtLSBFYXJzIC0tPgo8ZWxsaXBzZSBjeD0iMjMiIGN5PSIxOCIgcng9IjQiIHJ5PSI3IiBmaWxsPSIjZmRkOTM1Ii8+CjxlbGxpcHNlIGN4PSIzNyIgY3k9IjE4IiByeD0iNCIgcnk9IjciIGZpbGw9IiNmZGQ5MzUiLz4KPCEtLSBFeWVzIC0tPgo8Y2lyY2xlIGN4PSIyNiIgY3k9IjIzIiByPSIyIiBmaWxsPSIjMzMzIi8+CjxjaXJjbGUgY3g9IjM0IiBjeT0iMjMiIHI9IjIiIGZpbGw9IiMzMzMiLz4KPCEtLSBOb3NlIC0tPgo8Y2lyY2xlIGN4PSIzMCIgY3k9IjI3IiByPSIxLjUiIGZpbGw9IiMzMzMiLz4KPCEtLSBNYWduaWZ5aW5nIEdsYXNzIC0tPgo8Y2lyY2xlIGN4PSI0NSIgY3k9IjM1IiByPSI4IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NjQ0MDAiIHN0cm9rZS13aWR0aD0iMyIvPgo8bGluZSB4MT0iNTAiIHkxPSI0MCIgeDI9IjU1IiB5Mj0iNDUiIHN0cm9rZT0iIzY2NDQwMCIgc3Ryb2tlLXdpZHRoPSIzIi8+CjwhLS0gSGF0IC0tPgo8ZWxsaXBzZSBjeD0iMzAiIGN5PSIxNSIgcng9IjEwIiByeT0iNCIgZmlsbD0iIzY2NDQwMCIvPgo8IS0tIEFtZXJpY2FuIEZsYWcgLS0+CjxyZWN0IHg9IjI1IiB5PSIzNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjciIGZpbGw9IiNiMjIyMzQiLz4KPHN0cmlwZSB4PSIyNSIgeT0iMzciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxIiBmaWxsPSIjZmZmIi8+CjxzdHJpcGUgeD0iMjUiIHk9IjM5IiB3aWR0aD0iMTAiIGhlaWdodD0iMSIgZmlsbD0iI2ZmZiIvPgo8cmVjdCB4PSIyNSIgeT0iMzUiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiMzYzNiNmUiLz4KPC9zdmc+Cjwvc3ZnPgo=') center/contain no-repeat; border-radius: 50%; margin-right: 1rem; border: 3px solid rgba(255,255,255,0.3);"></div>
+            <h1 style="font-size: 3rem; margin: 0; font-weight: 700;">DOGE Government Efficiency Dashboard</h1>
+        </div>
         <p style="font-size: 1.3rem; margin-bottom: 1.5rem; opacity: 0.9;">
             Comprehensive Analysis of Department of Government Efficiency Data
         </p>
@@ -246,19 +252,28 @@ def render_enhanced_homepage(datasets=None):
     </div>
     """, unsafe_allow_html=True)
     
+    # Alternative approach if the embedded SVG doesn't work - use emoji
+    # st.markdown("""
+    # <div class="hero-section" style="text-align: center; padding: 2rem 0; background: linear-gradient(135deg, #1f77b4 0%, #005bbb 100%); border-radius: 15px; margin-bottom: 2rem; color: white; box-shadow: 0 8px 16px rgba(0,0,0,0.1);">
+    #     <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+    #         <div style="font-size: 4rem; margin-right: 1rem;">🔍🐕</div>
+    #         <h1 style="font-size: 3rem; margin: 0; font-weight: 700;">DOGE Government Efficiency Dashboard</h1>
+    #     </div>
+    # """, unsafe_allow_html=True)
+    
     # Data freshness indicator
     render_data_freshness_indicator()
     
     # Quick tour button
     render_quick_tour()
     
-    # Enhanced Quick Stats with FIXED styling
+    # Enhanced Quick Stats with REMOVED sparklines
     st.markdown("### 📊 Real-Time Dashboard Metrics")
     
     if datasets:
         stats = get_homepage_stats(datasets)
         
-        # Top row metrics - using regular Streamlit columns without extra divs
+        # Top row metrics - NO SPARKLINES
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
@@ -269,14 +284,6 @@ def render_enhanced_homepage(datasets=None):
                 delta=f"{delta_val} terminated",
                 help="Government contracts analyzed for efficiency"
             )
-            # Simplified sparkline - just show if we have data
-            if stats['total_contracts'] > 0:
-                # Create a simple line chart instead of the complex sparkline
-                chart_data = pd.DataFrame({
-                    'trend': [stats['total_contracts'] * 0.7, stats['total_contracts'] * 0.8, 
-                             stats['total_contracts'] * 0.9, stats['total_contracts']]
-                })
-                st.line_chart(chart_data['trend'], height=60)
         
         with col2:
             st.metric(
@@ -285,12 +292,6 @@ def render_enhanced_homepage(datasets=None):
                 delta=f"${stats['lease_savings']/1000000:.1f}M saved" if stats['lease_savings'] > 0 else "No savings data",
                 help="Property leases evaluated for cost savings"
             )
-            if stats['total_leases'] > 0:
-                chart_data = pd.DataFrame({
-                    'trend': [stats['total_leases'] * 0.6, stats['total_leases'] * 0.75, 
-                             stats['total_leases'] * 0.85, stats['total_leases']]
-                })
-                st.line_chart(chart_data['trend'], height=60)
         
         with col3:
             st.metric(
@@ -299,12 +300,6 @@ def render_enhanced_homepage(datasets=None):
                 delta=f"${stats['grant_savings']/1000000:.1f}M impact" if stats['grant_savings'] > 0 else "Impact analysis",
                 help="Federal grants assessed for impact"
             )
-            if stats['total_grants'] > 0:
-                chart_data = pd.DataFrame({
-                    'trend': [stats['total_grants'] * 0.5, stats['total_grants'] * 0.7, 
-                             stats['total_grants'] * 0.8, stats['total_grants']]
-                })
-                st.line_chart(chart_data['trend'], height=60)
         
         with col4:
             payment_display = f"{stats['total_payments']:,}" if stats['total_payments'] > 0 else "Processing"
@@ -314,14 +309,8 @@ def render_enhanced_homepage(datasets=None):
                 delta="Anomaly detection active",
                 help="Government payment transactions monitored"
             )
-            if stats['total_payments'] > 0:
-                chart_data = pd.DataFrame({
-                    'trend': [stats['total_payments'] * 0.3, stats['total_payments'] * 0.6, 
-                             stats['total_payments'] * 0.8, stats['total_payments']]
-                })
-                st.line_chart(chart_data['trend'], height=60)
         
-        # Bottom row - summary metrics with better styling
+        # Bottom row - summary metrics with FIXED styling
         st.markdown("---")
         
         # Use metric containers for better styling
@@ -331,8 +320,8 @@ def render_enhanced_homepage(datasets=None):
             st.markdown("""
             <div class="metric-container">
                 <h3>💰 Total Value Analyzed</h3>
-                <h2 style="color: #1f77b4; margin: 0.5rem 0;">{}</h2>
-                <p style="color: #666; margin: 0;">Combined value of all analyzed government spending</p>
+                <h2 style="color: #1f77b4;">{}</h2>
+                <p>Combined value of all analyzed government spending</p>
             </div>
             """.format(
                 f"${stats['total_value']/1000000000:.1f}B" if stats['total_value'] > 1000000000 else f"${stats['total_value']/1000000:.1f}M"
@@ -343,8 +332,8 @@ def render_enhanced_homepage(datasets=None):
             st.markdown("""
             <div class="metric-container">
                 <h3>💸 Total Savings Identified</h3>
-                <h2 style="color: #28a745; margin: 0.5rem 0;">{}</h2>
-                <p style="color: #666; margin: 0;">Total cost savings • {}</p>
+                <h2 style="color: #28a745;">{}</h2>
+                <p>Total cost savings • {}</p>
             </div>
             """.format(
                 f"${stats['total_savings']/1000000000:.1f}B" if stats['total_savings'] > 1000000000 else f"${stats['total_savings']/1000000:.1f}M",
@@ -356,8 +345,8 @@ def render_enhanced_homepage(datasets=None):
             st.markdown("""
             <div class="metric-container">
                 <h3>📊 Total Records Analyzed</h3>
-                <h2 style="color: #17a2b8; margin: 0.5rem 0;">{:,}</h2>
-                <p style="color: #666; margin: 0;">Combined dataset size • Real-time analysis</p>
+                <h2 style="color: #17a2b8;">{:,}</h2>
+                <p>Combined dataset size • Real-time analysis</p>
             </div>
             """.format(total_records), unsafe_allow_html=True)
     
@@ -503,15 +492,15 @@ def render_enhanced_homepage(datasets=None):
         - Interactive geographic mapping with drill-down
         - Real-time timeline and trend analysis
         - Comparative benchmarking across agencies
-        - Sparkline indicators for quick insights
+        - Professional dashboard design
         """)
     
-    # Academic Context
+    # Academic Context - REMOVED Academic Standards Section, CORRECTED to MSBA
     st.markdown("---")
     st.markdown("### 🎓 Academic Excellence & Professional Standards")
     
     st.info("""
-    **MBA Capstone Project - Fairfield University Dolan School of Business**
+    **MSBA Capstone Project - Fairfield University Dolan School of Business**
     
     **Project Objectives:**
     ✅ Demonstrate advanced data visualization and interactive dashboard development  
@@ -519,24 +508,18 @@ def render_enhanced_homepage(datasets=None):
     ✅ Provide actionable insights for public policy decision-making  
     ✅ Showcase professional-grade analytical capabilities for career advancement  
     
-    **Academic Standards Maintained:**
-    - Rigorous methodology documentation and peer review process
-    - Ethical data handling with privacy protection measures
-    - Bias-free analysis with transparent limitation acknowledgments
-    - Professional presentation suitable for stakeholder engagement
-    
     **Real-World Applications:**
     This dashboard demonstrates practical skills in government analytics, policy evaluation, 
     and executive decision support - directly applicable to consulting, public sector, and 
     corporate strategy roles requiring data-driven efficiency optimization.
     """)
     
-    # Enhanced Footer
+    # Enhanced Footer - CORRECTED to MSBA
     st.markdown("---")
     st.markdown("""
     <div style="text-align: center; color: #666; font-size: 0.9rem; padding: 2rem; background: #f8f9fa; border-radius: 10px;">
         <h4 style="color: #333; margin-bottom: 1rem;">Government Efficiency Dashboard</h4>
-        <p><strong>Fairfield University Dolan School of Business</strong> | MBA Business Analytics Program | 2025</p>
+        <p><strong>Fairfield University Dolan School of Business</strong> | MSBA Business Analytics Program | 2025</p>
         <p>Data sourced from DOGE API • Educational and research purposes • Public domain government data</p>
         <p style="margin-top: 1rem; font-size: 0.8rem;">
             <strong>Technical Stack:</strong> Streamlit • Plotly • Pandas • Scikit-learn • Python 3.11<br>
@@ -544,7 +527,7 @@ def render_enhanced_homepage(datasets=None):
         </p>
         <div style="margin-top: 1.5rem; border-top: 1px solid #dee2e6; padding-top: 1rem;">
             <p style="margin: 0; font-size: 0.8rem; color: #6c757d;">
-                <em>This dashboard represents rigorous academic work meeting MBA capstone standards for 
+                <em>This dashboard represents rigorous academic work meeting MSBA capstone standards for 
                 data analysis, visualization design, and professional presentation quality.</em>
             </p>
         </div>
