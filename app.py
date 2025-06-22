@@ -130,43 +130,6 @@ def render_data_freshness_indicator():
     </div>
     """, unsafe_allow_html=True)
 
-def render_quick_tour():
-    """Render an interactive quick tour"""
-    if st.button("🎯 Take a Quick Tour", type="primary", help="Learn about dashboard features"):
-        with st.expander("🚀 Quick Tour - Dashboard Features", expanded=True):
-            st.markdown("""
-            ### Welcome to your DOGE Analysis Dashboard!
-            
-            **Step 1: Homepage Overview**
-            - Real-time metrics from government data
-            - Visual navigation to analysis sections
-            - Data freshness indicators
-            
-            **Step 2: Analysis Sections**
-            - **Contracts**: Analyze terminations, savings, vendor performance
-            - **Grants**: Examine distribution, recipients, impact models
-            - **Leases**: Geographic analysis, cost efficiency metrics
-            - **Payments**: Timeline analysis, anomaly detection
-            
-            **Step 3: Interactive Features**
-            - Use sidebar filters to narrow your focus
-            - Switch between analysis views within each tab
-            - Export data for further analysis
-            - Hover over charts for detailed insights
-            
-            **Step 4: Advanced Analytics**
-            - Machine learning outlier detection
-            - Grant impact classification models
-            - Geographic and temporal analysis
-            - Savings rate calculations
-            
-            **Pro Tips:**
-            - Start with the overview metrics on each tab
-            - Use filters to focus on specific agencies or time periods
-            - Download filtered data for presentations
-            - Check the methodology section for analysis details
-            """)
-
 def render_enhanced_homepage(datasets=None):
     """Render the enhanced homepage with all new features"""
     
@@ -225,9 +188,6 @@ def render_enhanced_homepage(datasets=None):
     
     # Data freshness indicator
     render_data_freshness_indicator()
-    
-    # Quick tour button
-    render_quick_tour()
     
     # Enhanced Quick Stats with real data
     st.markdown('<div class="quick-stats">', unsafe_allow_html=True)
@@ -345,35 +305,7 @@ def render_enhanced_homepage(datasets=None):
     
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Recent Activity Timeline (simulated)
-    st.markdown("---")
-    st.markdown("### 📅 Recent DOGE Activity Timeline")
-    
-    # Create timeline data
-    timeline_data = [
-        {"date": "2025-06-15", "activity": "Contract Analysis", "description": "Identified $2.3M in potential savings", "type": "savings"},
-        {"date": "2025-06-14", "activity": "Lease Termination", "description": "748 federal leases reviewed for efficiency", "type": "review"},
-        {"date": "2025-06-13", "activity": "Grant Assessment", "description": "ML model identified low-impact grants", "type": "analysis"},
-        {"date": "2025-06-12", "activity": "Payment Audit", "description": "Anomaly detection flagged 156 transactions", "type": "audit"},
-        {"date": "2025-06-11", "activity": "System Update", "description": "Dashboard enhanced with new visualization features", "type": "system"}
-    ]
-    
-    for item in timeline_data[:3]:  # Show last 3 activities
-        icon = {"savings": "💰", "review": "🔍", "analysis": "🤖", "audit": "🚨", "system": "⚙️"}[item["type"]]
-        color = {"savings": "#28a745", "review": "#17a2b8", "analysis": "#6f42c1", "audit": "#fd7e14", "system": "#6c757d"}[item["type"]]
-        
-        st.markdown(f"""
-        <div style="border-left: 4px solid {color}; padding-left: 1rem; margin: 1rem 0; background: #f8f9fa; border-radius: 0 8px 8px 0;">
-            <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
-                <span style="font-size: 1.2rem; margin-right: 0.5rem;">{icon}</span>
-                <strong>{item['activity']}</strong>
-                <span style="margin-left: auto; color: #6c757d; font-size: 0.9rem;">{item['date']}</span>
-            </div>
-            <p style="margin: 0; color: #495057;">{item['description']}</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Navigation Cards (keeping existing design but with enhancements)
+    # Navigation Cards
     st.markdown("---")
     st.markdown("### 🎯 Explore Analysis Sections")
     
@@ -382,7 +314,7 @@ def render_enhanced_homepage(datasets=None):
     with nav_col1:
         with st.container():
             st.markdown("""
-            <div style="border: 2px solid #1f77b4; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+            <div style="border: 2px solid #1f77b4; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);">
                 <h4 style="color: #1f77b4; margin-bottom: 1rem;">📋 Contracts Analysis</h4>
                 <p>Analyze federal contract terminations, savings, and vendor performance across agencies. 
                 Includes outlier detection and timeline analysis of contract efficiency initiatives.</p>
@@ -410,233 +342,6 @@ def render_enhanced_homepage(datasets=None):
                 </ul>
             </div>
             """, unsafe_allow_html=True)
-    
-    nav_col3, nav_col4 = st.columns(2)
-    
-    with nav_col3:
-        with st.container():
-            st.markdown("""
-            <div style="border: 2px solid #003049; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #e0f2f1 100%);">
-                <h4 style="color: #003049; margin-bottom: 1rem;">🏢 Leases Analysis</h4>
-                <p>Geographic analysis of federal property leases, cost efficiency metrics, 
-                and termination impact assessment across states and cities.</p>
-                <ul style="margin-top: 1rem;">
-                    <li>Geographic analysis by state/city</li>
-                    <li>Cost efficiency (cost per sq ft)</li>
-                    <li>Property size analysis</li>
-                    <li>Timeline trends & savings rates</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-    
-    with nav_col4:
-        with st.container():
-            st.markdown("""
-            <div style="border: 2px solid #fcbf49; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #fff8e1 100%);">
-                <h4 style="color: #fcbf49; margin-bottom: 1rem;">💳 Payments Analysis</h4>
-                <p>Government payment pattern analysis, anomaly detection, and financial 
-                trend identification across agencies and payment types.</p>
-                <ul style="margin-top: 1rem;">
-                    <li>Payment timeline analysis</li>
-                    <li>Agency spending patterns</li>
-                    <li>Payment type distribution</li>
-                    <li>Anomaly detection & fraud analysis</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-    
-    # Enhanced Key Features Section
-    st.markdown("---")
-    st.markdown("### 🛠️ Advanced Dashboard Capabilities")
-    
-    feature_col1, feature_col2, feature_col3 = st.columns(3)
-    
-    with feature_col1:
-        st.markdown("""
-        **🔍 Interactive Analysis**
-        - Dynamic filtering and drill-down capabilities
-        - Real-time data exploration with live updates
-        - Customizable date ranges and parameters
-        - One-click export functionality for presentations
-        - Mobile-responsive design for on-the-go analysis
-        """)
-    
-    with feature_col2:
-        st.markdown("""
-        **🤖 Machine Learning Insights**
-        - Isolation Forest outlier detection algorithms
-        - Random Forest grant impact classification
-        - Anomaly detection for fraud prevention
-        - Predictive efficiency scoring models
-        - Automated pattern recognition across datasets
-        """)
-    
-    with feature_col3:
-        st.markdown("""
-        **📈 Executive-Grade Visualizations**
-        - Publication-ready charts and graphs
-        - Interactive geographic mapping with drill-down
-        - Real-time timeline and trend analysis
-        - Comparative benchmarking across agencies
-        - Sparkline indicators for quick insights
-        """)
-    
-    # Enhanced FAQ Section
-    st.markdown("---")
-    if st.button("❓ Frequently Asked Questions", help="Common questions about the dashboard"):
-        with st.expander("📚 FAQ - Dashboard Usage & Methodology", expanded=True):
-            st.markdown("""
-            **Q: How often is the data updated?**
-            A: Data is refreshed every 24 hours from the DOGE API. The data freshness indicator shows the last update time.
-            
-            **Q: What methodology is used for outlier detection?**
-            A: We use Isolation Forest algorithms with 5% contamination rate, analyzing contract values and agency patterns.
-            
-            **Q: How are savings calculations verified?**
-            A: Savings figures come directly from DOGE API data. We cross-reference with contract termination dates and status.
-            
-            **Q: Can I export the analysis results?**
-            A: Yes! Each section has CSV download buttons for filtered data. Charts can be exported as images.
-            
-            **Q: What's the academic rigor behind this analysis?**
-            A: This MBA capstone project follows academic standards with documented methodology, bias checks, and transparent data sources.
-            
-            **Q: How do I interpret the efficiency metrics?**
-            A: Efficiency rates compare savings to total contract/lease values. Higher percentages indicate better cost optimization.
-            
-            **Q: Are there any data limitations I should know about?**
-            A: Yes - data quality depends on agency reporting. Some records may have missing fields or delayed updates.
-            
-            **Q: How can I use this for policy recommendations?**
-            A: Focus on agencies with high savings rates as best practices, and investigate outliers for potential improvements.
-            """)
-    
-    # Enhanced Data Sources section
-    st.markdown("---")
-    st.markdown("### 📚 Data Sources & Technical Architecture")
-    
-    method_col1, method_col2 = st.columns(2)
-    
-    with method_col1:
-        st.markdown("""
-        **📊 Primary Data Sources:**
-        - DOGE API (api.doge.gov) - Real-time government efficiency data
-        - Federal Procurement Data System (FPDS) - Contract information
-        - Government lease databases - Property management records
-        - Treasury payment systems - Financial transaction logs
-        - Federal grant databases - Award and recipient data
-        
-        **🔄 Data Pipeline:**
-        - 24-hour automated cache refresh cycle
-        - Real-time API integration with error handling
-        - Comprehensive data validation and cleaning
-        - Automated quality assurance checks
-        - Performance monitoring and alerting
-        """)
-    
-    with method_col2:
-        st.markdown("""
-        **🔬 Analysis Methodology:**
-        - Statistical analysis with confidence intervals
-        - Machine learning classification (Random Forest, Isolation Forest)
-        - Geographic and temporal pattern analysis
-        - Cross-sectional efficiency comparisons
-        - Longitudinal trend identification
-        
-        **✅ Quality Assurance Framework:**
-        - Multi-layer data validation processes
-        - Cross-reference verification with source systems
-        - Systematic bias detection and mitigation
-        - Transparent methodology documentation
-        - Peer review and academic oversight
-        """)
-    
-    # Academic Context with enhanced details
-    st.markdown("---")
-    st.markdown("### 🎓 Academic Excellence & Professional Standards")
-    
-    st.info("""
-    **MBA Capstone Project - Fairfield University Dolan School of Business**
-    
-    **Project Objectives:**
-    ✅ Demonstrate advanced data visualization and interactive dashboard development  
-    ✅ Apply machine learning techniques to government efficiency analysis  
-    ✅ Provide actionable insights for public policy decision-making  
-    ✅ Showcase professional-grade analytical capabilities for career advancement  
-    
-    **Academic Standards Maintained:**
-    - Rigorous methodology documentation and peer review process
-    - Ethical data handling with privacy protection measures
-    - Bias-free analysis with transparent limitation acknowledgments
-    - Professional presentation suitable for stakeholder engagement
-    
-    **Real-World Applications:**
-    This dashboard demonstrates practical skills in government analytics, policy evaluation, 
-    and executive decision support - directly applicable to consulting, public sector, and 
-    corporate strategy roles requiring data-driven efficiency optimization.
-    """)
-    
-    # Enhanced Navigation Instructions
-    st.markdown("---")
-    st.markdown("### 🧭 Navigation Guide & Best Practices")
-    
-    guide_col1, guide_col2 = st.columns(2)
-    
-    with guide_col1:
-        st.markdown("""
-        **🚀 Getting Started (Recommended Path):**
-        1. **Start here** - Review homepage metrics for overall context
-        2. **Select a focus area** - Choose Contracts, Grants, Leases, or Payments
-        3. **Apply filters** - Use sidebar controls to narrow your analysis
-        4. **Explore views** - Switch between different analysis perspectives
-        5. **Export insights** - Download filtered data for presentations
-        
-        **💡 Pro Tips for Maximum Insight:**
-        - Begin with agency-level analysis to identify patterns
-        - Use timeline views to understand temporal trends
-        - Cross-reference outliers across different data types
-        - Pay attention to savings rates vs. absolute dollar amounts
-        """)
-    
-    with guide_col2:
-        st.markdown("""
-        **🎯 Analysis Workflows by Use Case:**
-        
-        **For Policy Analysis:**
-        → Start with Contracts → Filter by agency → Examine savings trends
-        
-        **For Efficiency Benchmarking:**
-        → Compare agencies across Leases → Cost per sq ft analysis
-        
-        **For Fraud Detection:**
-        → Payments tab → Anomaly detection → Cross-check with contracts
-        
-        **For Presentation Prep:**
-        → Homepage overview → Specific section deep-dive → Export charts & data
-        
-        **For Academic Research:**
-        → Methodology review → Multi-section analysis → Download all datasets
-        """)
-    
-    # Enhanced Footer with additional links
-    st.markdown("---")
-    st.markdown("""
-    <div style="text-align: center; color: #666; font-size: 0.9rem; padding: 2rem; background: #f8f9fa; border-radius: 10px;">
-        <h4 style="color: #333; margin-bottom: 1rem;">Government Efficiency Dashboard</h4>
-        <p><strong>Fairfield University Dolan School of Business</strong> | MBA Business Analytics Program | 2025</p>
-        <p>Data sourced from DOGE API • Educational and research purposes • Public domain government data</p>
-        <p style="margin-top: 1rem; font-size: 0.8rem;">
-            <strong>Technical Stack:</strong> Streamlit • Plotly • Pandas • Scikit-learn • Python 3.11<br>
-            <strong>Deployment:</strong> GitHub Actions • Streamlit Cloud • API Integration • Real-time Analytics
-        </p>
-        <div style="margin-top: 1.5rem; border-top: 1px solid #dee2e6; padding-top: 1rem;">
-            <p style="margin: 0; font-size: 0.8rem; color: #6c757d;">
-                <em>This dashboard represents rigorous academic work meeting MBA capstone standards for 
-                data analysis, visualization design, and professional presentation quality.</em>
-            </p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
 
 @st.cache_data(ttl=3600)  # Cache for 1 hour to improve performance
 def load_datasets_cached():
@@ -648,7 +353,7 @@ def main():
     st.set_page_config(**PAGE_CONFIG)
     
     # Create tabs - adding Homepage as the first tab
-    tabs = st.tabs(["🏠 Homepage", "📋 Contracts", "🎁 Grants", "🏢 Leases", "💳 Payments", "🔬 Deep Analysis"])
+    tabs = st.tabs(["🏠 Homepage", "🔬 Deep Analysis", "📋 Contracts", "🎁 Grants", "🏢 Leases", "💳 Payments"])
     
     # Initialize session state for datasets
     if 'datasets_loaded' not in st.session_state:
@@ -672,42 +377,87 @@ def main():
         # Load datasets if not already loaded
         if not st.session_state.datasets_loaded:
             with st.spinner("Loading datasets..."):
-                st.session_state.datasets = load_datasets_cached()
-                st.session_state.datasets_loaded = True
+                try:
+                    st.session_state.datasets = load_datasets_cached()
+                    st.session_state.datasets_loaded = True
+                except Exception as e:
+                    st.error(f"Error loading datasets: {e}")
+                    st.session_state.datasets = {
+                        "Contracts": pd.DataFrame(),
+                        "Grants": pd.DataFrame(),
+                        "Leases": pd.DataFrame(),
+                        "Payments": pd.DataFrame()
+                    }
         
-        render_contracts_tab(st.session_state.datasets["Contracts"])
+        render_deep_analysis_tab(st.session_state.datasets)
     
     with tabs[2]:
         if not st.session_state.datasets_loaded:
             with st.spinner("Loading datasets..."):
-                st.session_state.datasets = load_datasets_cached()
-                st.session_state.datasets_loaded = True
+                try:
+                    st.session_state.datasets = load_datasets_cached()
+                    st.session_state.datasets_loaded = True
+                except Exception as e:
+                    st.error(f"Error loading datasets: {e}")
+                    st.session_state.datasets = {
+                        "Contracts": pd.DataFrame(),
+                        "Grants": pd.DataFrame(),
+                        "Leases": pd.DataFrame(),
+                        "Payments": pd.DataFrame()
+                    }
         
-        render_grants_tab(st.session_state.datasets["Grants"])
+        render_contracts_tab(st.session_state.datasets["Contracts"])
     
     with tabs[3]:
         if not st.session_state.datasets_loaded:
             with st.spinner("Loading datasets..."):
-                st.session_state.datasets = load_datasets_cached()
-                st.session_state.datasets_loaded = True
+                try:
+                    st.session_state.datasets = load_datasets_cached()
+                    st.session_state.datasets_loaded = True
+                except Exception as e:
+                    st.error(f"Error loading datasets: {e}")
+                    st.session_state.datasets = {
+                        "Contracts": pd.DataFrame(),
+                        "Grants": pd.DataFrame(),
+                        "Leases": pd.DataFrame(),
+                        "Payments": pd.DataFrame()
+                    }
         
-        render_leases_tab(st.session_state.datasets["Leases"])
+        render_grants_tab(st.session_state.datasets["Grants"])
     
     with tabs[4]:
         if not st.session_state.datasets_loaded:
             with st.spinner("Loading datasets..."):
-                st.session_state.datasets = load_datasets_cached()
-                st.session_state.datasets_loaded = True
+                try:
+                    st.session_state.datasets = load_datasets_cached()
+                    st.session_state.datasets_loaded = True
+                except Exception as e:
+                    st.error(f"Error loading datasets: {e}")
+                    st.session_state.datasets = {
+                        "Contracts": pd.DataFrame(),
+                        "Grants": pd.DataFrame(),
+                        "Leases": pd.DataFrame(),
+                        "Payments": pd.DataFrame()
+                    }
         
-        render_payments_tab(st.session_state.datasets["Payments"])
+        render_leases_tab(st.session_state.datasets["Leases"])
     
     with tabs[5]:
         if not st.session_state.datasets_loaded:
             with st.spinner("Loading datasets..."):
-                st.session_state.datasets = load_datasets_cached()
-                st.session_state.datasets_loaded = True
+                try:
+                    st.session_state.datasets = load_datasets_cached()
+                    st.session_state.datasets_loaded = True
+                except Exception as e:
+                    st.error(f"Error loading datasets: {e}")
+                    st.session_state.datasets = {
+                        "Contracts": pd.DataFrame(),
+                        "Grants": pd.DataFrame(),
+                        "Leases": pd.DataFrame(),
+                        "Payments": pd.DataFrame()
+                    }
         
-        render_deep_analysis_tab(st.session_state.datasets)
+        render_payments_tab(st.session_state.datasets["Payments"])
 
 if __name__ == "__main__":
     main()
