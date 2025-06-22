@@ -576,6 +576,36 @@ def main():
                     st.session_state.datasets = load_datasets_cached()
                     st.session_state.datasets_loaded = True
                 except Exception as e:
+                    st.warning(f"Could not load real-time data: {e}. Showing demo homepage.")
+                    st.session_state.datasets = None
+        
+        render_enhanced_homepage(st.session_state.datasets)
+    
+    with tabs[1]:
+        # Load datasets if not already loaded
+        if not st.session_state.datasets_loaded:
+            with st.spinner("Loading datasets..."):
+                try:
+                    st.session_state.datasets = load_datasets_cached()
+                    st.session_state.datasets_loaded = True
+                except Exception as e:
+                    st.error(f"Error loading datasets: {e}")
+                    st.session_state.datasets = {
+                        "Contracts": pd.DataFrame(),
+                        "Grants": pd.DataFrame(),
+                        "Leases": pd.DataFrame(),
+                        "Payments": pd.DataFrame()
+                    }
+        
+        render_deep_analysis_tab(st.session_state.datasets)
+    
+    with tabs[2]:
+        if not st.session_state.datasets_loaded:
+            with st.spinner("Loading datasets..."):
+                try:
+                    st.session_state.datasets = load_datasets_cached()
+                    st.session_state.datasets_loaded = True
+                except Exception as e:
                     st.error(f"Error loading datasets: {e}")
                     st.session_state.datasets = {
                         "Contracts": pd.DataFrame(),
@@ -639,33 +669,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-                except Exception as e:
-                    st.warning(f"Could not load real-time data: {e}. Showing demo homepage.")
-                    st.session_state.datasets = None
-        
-        render_enhanced_homepage(st.session_state.datasets)
-    
-    with tabs[1]:
-        # Load datasets if not already loaded
-        if not st.session_state.datasets_loaded:
-            with st.spinner("Loading datasets..."):
-                try:
-                    st.session_state.datasets = load_datasets_cached()
-                    st.session_state.datasets_loaded = True
-                except Exception as e:
-                    st.error(f"Error loading datasets: {e}")
-                    st.session_state.datasets = {
-                        "Contracts": pd.DataFrame(),
-                        "Grants": pd.DataFrame(),
-                        "Leases": pd.DataFrame(),
-                        "Payments": pd.DataFrame()
-                    }
-        
-        render_deep_analysis_tab(st.session_state.datasets)
-    
-    with tabs[2]:
-        if not st.session_state.datasets_loaded:
-            with st.spinner("Loading datasets..."):
-                try:
-                    st.session_state.datasets = load_datasets_cached()
-                    st.session_state.datasets_loaded = True
