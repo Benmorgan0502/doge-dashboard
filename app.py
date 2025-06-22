@@ -168,9 +168,9 @@ def render_quick_tour():
             """)
 
 def render_enhanced_homepage(datasets=None):
-    """Render the enhanced homepage with all new features"""
+    """Render the enhanced homepage with fixed styling"""
     
-    # Add custom CSS for mobile responsiveness and animations - FIXED TEXT COLOR
+    # Add improved CSS
     st.markdown("""
     <style>
     @media (max-width: 768px) {
@@ -181,9 +181,6 @@ def render_enhanced_homepage(datasets=None):
         .hero-section h1 {
             font-size: 2rem !important;
         }
-        .nav-cards {
-            flex-direction: column !important;
-        }
     }
     
     .metric-card {
@@ -193,6 +190,7 @@ def render_enhanced_homepage(datasets=None):
         border: 1px solid #e0e0e0;
         background: white;
         margin-bottom: 1rem;
+        min-height: 120px;
     }
     
     .metric-card:hover {
@@ -207,7 +205,12 @@ def render_enhanced_homepage(datasets=None):
         margin: 2rem 0;
     }
     
-    /* Fix text color in cards - make it dark */
+    /* Remove the problematic white boxes */
+    .quick-stats .element-container {
+        background: transparent !important;
+    }
+    
+    /* Fix text color in cards */
     .nav-card-content h4 {
         color: #1f77b4 !important;
     }
@@ -216,6 +219,15 @@ def render_enhanced_homepage(datasets=None):
     }
     .nav-card-content li {
         color: #555 !important;
+    }
+    
+    /* Style the metrics better */
+    .metric-container {
+        background: white;
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        border-left: 4px solid #1f77b4;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -240,18 +252,16 @@ def render_enhanced_homepage(datasets=None):
     # Quick tour button
     render_quick_tour()
     
-    # Enhanced Quick Stats with real data
-    st.markdown('<div class="quick-stats">', unsafe_allow_html=True)
+    # Enhanced Quick Stats with FIXED styling
     st.markdown("### 📊 Real-Time Dashboard Metrics")
     
     if datasets:
         stats = get_homepage_stats(datasets)
         
-        # Top row metrics
+        # Top row metrics - using regular Streamlit columns without extra divs
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             delta_val = f"+{stats['terminated_contracts']:,}" if stats['terminated_contracts'] > 0 else "No data"
             st.metric(
                 label="📄 Total Contracts",
@@ -259,16 +269,16 @@ def render_enhanced_homepage(datasets=None):
                 delta=f"{delta_val} terminated",
                 help="Government contracts analyzed for efficiency"
             )
-            # Add sparkline
+            # Simplified sparkline - just show if we have data
             if stats['total_contracts'] > 0:
-                sparkline_data = [stats['total_contracts'] * 0.7, stats['total_contracts'] * 0.8, 
-                                stats['total_contracts'] * 0.9, stats['total_contracts']]
-                fig = create_sparkline_chart(sparkline_data, "Contracts", "#1f77b4")
-                st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-            st.markdown('</div>', unsafe_allow_html=True)
+                # Create a simple line chart instead of the complex sparkline
+                chart_data = pd.DataFrame({
+                    'trend': [stats['total_contracts'] * 0.7, stats['total_contracts'] * 0.8, 
+                             stats['total_contracts'] * 0.9, stats['total_contracts']]
+                })
+                st.line_chart(chart_data['trend'], height=60)
         
         with col2:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             st.metric(
                 label="🏢 Total Leases", 
                 value=f"{stats['total_leases']:,}",
@@ -276,14 +286,13 @@ def render_enhanced_homepage(datasets=None):
                 help="Property leases evaluated for cost savings"
             )
             if stats['total_leases'] > 0:
-                sparkline_data = [stats['total_leases'] * 0.6, stats['total_leases'] * 0.75, 
-                                stats['total_leases'] * 0.85, stats['total_leases']]
-                fig = create_sparkline_chart(sparkline_data, "Leases", "#d62828")
-                st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-            st.markdown('</div>', unsafe_allow_html=True)
+                chart_data = pd.DataFrame({
+                    'trend': [stats['total_leases'] * 0.6, stats['total_leases'] * 0.75, 
+                             stats['total_leases'] * 0.85, stats['total_leases']]
+                })
+                st.line_chart(chart_data['trend'], height=60)
         
         with col3:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             st.metric(
                 label="🎯 Total Grants",
                 value=f"{stats['total_grants']:,}",
@@ -291,14 +300,13 @@ def render_enhanced_homepage(datasets=None):
                 help="Federal grants assessed for impact"
             )
             if stats['total_grants'] > 0:
-                sparkline_data = [stats['total_grants'] * 0.5, stats['total_grants'] * 0.7, 
-                                stats['total_grants'] * 0.8, stats['total_grants']]
-                fig = create_sparkline_chart(sparkline_data, "Grants", "#003049")
-                st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-            st.markdown('</div>', unsafe_allow_html=True)
+                chart_data = pd.DataFrame({
+                    'trend': [stats['total_grants'] * 0.5, stats['total_grants'] * 0.7, 
+                             stats['total_grants'] * 0.8, stats['total_grants']]
+                })
+                st.line_chart(chart_data['trend'], height=60)
         
         with col4:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             payment_display = f"{stats['total_payments']:,}" if stats['total_payments'] > 0 else "Processing"
             st.metric(
                 label="💳 Payment Records",
@@ -307,39 +315,51 @@ def render_enhanced_homepage(datasets=None):
                 help="Government payment transactions monitored"
             )
             if stats['total_payments'] > 0:
-                sparkline_data = [stats['total_payments'] * 0.3, stats['total_payments'] * 0.6, 
-                                stats['total_payments'] * 0.8, stats['total_payments']]
-                fig = create_sparkline_chart(sparkline_data, "Payments", "#fcbf49")
-                st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-            st.markdown('</div>', unsafe_allow_html=True)
+                chart_data = pd.DataFrame({
+                    'trend': [stats['total_payments'] * 0.3, stats['total_payments'] * 0.6, 
+                             stats['total_payments'] * 0.8, stats['total_payments']]
+                })
+                st.line_chart(chart_data['trend'], height=60)
         
-        # Bottom row - summary metrics
+        # Bottom row - summary metrics with better styling
         st.markdown("---")
+        
+        # Use metric containers for better styling
         summary_col1, summary_col2, summary_col3 = st.columns(3)
         
         with summary_col1:
-            st.metric(
-                label="💰 Total Value Analyzed",
-                value=f"${stats['total_value']/1000000000:.1f}B" if stats['total_value'] > 1000000000 else f"${stats['total_value']/1000000:.1f}M",
-                help="Combined value of all analyzed government spending"
-            )
+            st.markdown("""
+            <div class="metric-container">
+                <h3>💰 Total Value Analyzed</h3>
+                <h2 style="color: #1f77b4; margin: 0.5rem 0;">{}</h2>
+                <p style="color: #666; margin: 0;">Combined value of all analyzed government spending</p>
+            </div>
+            """.format(
+                f"${stats['total_value']/1000000000:.1f}B" if stats['total_value'] > 1000000000 else f"${stats['total_value']/1000000:.1f}M"
+            ), unsafe_allow_html=True)
         
         with summary_col2:
-            st.metric(
-                label="💸 Total Savings Identified",
-                value=f"${stats['total_savings']/1000000000:.1f}B" if stats['total_savings'] > 1000000000 else f"${stats['total_savings']/1000000:.1f}M",
-                delta=f"{stats['savings_rate']:.1f}% efficiency rate" if stats['savings_rate'] > 0 else "Calculating efficiency",
-                help="Total cost savings and efficiency improvements"
-            )
+            efficiency_text = f"{stats['savings_rate']:.1f}% efficiency rate" if stats['savings_rate'] > 0 else "Calculating efficiency"
+            st.markdown("""
+            <div class="metric-container">
+                <h3>💸 Total Savings Identified</h3>
+                <h2 style="color: #28a745; margin: 0.5rem 0;">{}</h2>
+                <p style="color: #666; margin: 0;">Total cost savings • {}</p>
+            </div>
+            """.format(
+                f"${stats['total_savings']/1000000000:.1f}B" if stats['total_savings'] > 1000000000 else f"${stats['total_savings']/1000000:.1f}M",
+                efficiency_text
+            ), unsafe_allow_html=True)
         
         with summary_col3:
             total_records = stats['total_contracts'] + stats['total_grants'] + stats['total_leases'] + stats['total_payments']
-            st.metric(
-                label="📊 Total Records Analyzed",
-                value=f"{total_records:,}",
-                delta="Real-time analysis",
-                help="Combined dataset size across all categories"
-            )
+            st.markdown("""
+            <div class="metric-container">
+                <h3>📊 Total Records Analyzed</h3>
+                <h2 style="color: #17a2b8; margin: 0.5rem 0;">{:,}</h2>
+                <p style="color: #666; margin: 0;">Combined dataset size • Real-time analysis</p>
+            </div>
+            """.format(total_records), unsafe_allow_html=True)
     
     else:
         # Fallback metrics if no data loaded
@@ -353,8 +373,6 @@ def render_enhanced_homepage(datasets=None):
             st.metric("🎯 Total Grants", "Loading...", help="Federal grants assessed for impact")
         with col4:
             st.metric("💳 Payment Records", "Loading...", help="Government payment transactions monitored")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
     
     # Recent Activity Timeline (simulated)
     st.markdown("---")
@@ -377,84 +395,80 @@ def render_enhanced_homepage(datasets=None):
         <div style="border-left: 4px solid {color}; padding-left: 1rem; margin: 1rem 0; background: #f8f9fa; border-radius: 0 8px 8px 0;">
             <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
                 <span style="font-size: 1.2rem; margin-right: 0.5rem;">{icon}</span>
-                <strong>{item['activity']}</strong>
+                <strong style="color: #333;">{item['activity']}</strong>
                 <span style="margin-left: auto; color: #6c757d; font-size: 0.9rem;">{item['date']}</span>
             </div>
             <p style="margin: 0; color: #495057;">{item['description']}</p>
         </div>
         """, unsafe_allow_html=True)
     
-    # Navigation Cards (keeping existing design but with FIXED text colors)
+    # Navigation Cards with IMPROVED styling
     st.markdown("---")
     st.markdown("### 🎯 Explore Analysis Sections")
     
     nav_col1, nav_col2 = st.columns(2)
     
     with nav_col1:
-        with st.container():
-            st.markdown("""
-            <div class="nav-card-content" style="border: 2px solid #1f77b4; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);">
-                <h4 style="color: #1f77b4; margin-bottom: 1rem;">📋 Contracts Analysis</h4>
-                <p style="color: #333;">Analyze federal contract terminations, savings, and vendor performance across agencies. 
-                Includes outlier detection and timeline analysis of contract efficiency initiatives.</p>
-                <ul style="margin-top: 1rem; color: #555;">
-                    <li>Agency performance tracking</li>
-                    <li>Contract status distribution</li>
-                    <li>Savings analysis over time</li>
-                    <li>Vendor analysis & outlier detection</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
+        st.markdown("""
+        <div style="border: 2px solid #1f77b4; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #1f77b4; margin-bottom: 1rem; font-weight: 600;">📋 Contracts Analysis</h4>
+            <p style="color: #333; line-height: 1.5;">Analyze federal contract terminations, savings, and vendor performance across agencies. 
+            Includes outlier detection and timeline analysis of contract efficiency initiatives.</p>
+            <ul style="margin-top: 1rem; color: #555; padding-left: 1.2rem;">
+                <li>Agency performance tracking</li>
+                <li>Contract status distribution</li>
+                <li>Savings analysis over time</li>
+                <li>Vendor analysis & outlier detection</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
     
     with nav_col2:
-        with st.container():
-            st.markdown("""
-            <div class="nav-card-content" style="border: 2px solid #d62828; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #ffebee 100%);">
-                <h4 style="color: #d62828; margin-bottom: 1rem;">🎁 Grants Analysis</h4>
-                <p style="color: #333;">Examine federal grant distribution, recipient analysis, and impact assessment. 
-                Features machine learning models for grant effectiveness classification.</p>
-                <ul style="margin-top: 1rem; color: #555;">
-                    <li>Agency grant distribution</li>
-                    <li>Recipient impact analysis</li>
-                    <li>Grant classification model</li>
-                    <li>Missing information detection</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
+        st.markdown("""
+        <div style="border: 2px solid #d62828; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #ffebee 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #d62828; margin-bottom: 1rem; font-weight: 600;">🎁 Grants Analysis</h4>
+            <p style="color: #333; line-height: 1.5;">Examine federal grant distribution, recipient analysis, and impact assessment. 
+            Features machine learning models for grant effectiveness classification.</p>
+            <ul style="margin-top: 1rem; color: #555; padding-left: 1.2rem;">
+                <li>Agency grant distribution</li>
+                <li>Recipient impact analysis</li>
+                <li>Grant classification model</li>
+                <li>Missing information detection</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
     
     nav_col3, nav_col4 = st.columns(2)
     
     with nav_col3:
-        with st.container():
-            st.markdown("""
-            <div class="nav-card-content" style="border: 2px solid #003049; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #e0f2f1 100%);">
-                <h4 style="color: #003049; margin-bottom: 1rem;">🏢 Leases Analysis</h4>
-                <p style="color: #333;">Geographic analysis of federal property leases, cost efficiency metrics, 
-                and termination impact assessment across states and cities.</p>
-                <ul style="margin-top: 1rem; color: #555;">
-                    <li>Geographic analysis by state/city</li>
-                    <li>Cost efficiency (cost per sq ft)</li>
-                    <li>Property size analysis</li>
-                    <li>Timeline trends & savings rates</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
+        st.markdown("""
+        <div style="border: 2px solid #003049; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #e0f2f1 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #003049; margin-bottom: 1rem; font-weight: 600;">🏢 Leases Analysis</h4>
+            <p style="color: #333; line-height: 1.5;">Geographic analysis of federal property leases, cost efficiency metrics, 
+            and termination impact assessment across states and cities.</p>
+            <ul style="margin-top: 1rem; color: #555; padding-left: 1.2rem;">
+                <li>Geographic analysis by state/city</li>
+                <li>Cost efficiency (cost per sq ft)</li>
+                <li>Property size analysis</li>
+                <li>Timeline trends & savings rates</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
     
     with nav_col4:
-        with st.container():
-            st.markdown("""
-            <div class="nav-card-content" style="border: 2px solid #fcbf49; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #fff8e1 100%);">
-                <h4 style="color: #fcbf49; margin-bottom: 1rem;">💳 Payments Analysis</h4>
-                <p style="color: #333;">Government payment pattern analysis, anomaly detection, and financial 
-                trend identification across agencies and payment types.</p>
-                <ul style="margin-top: 1rem; color: #555;">
-                    <li>Payment timeline analysis</li>
-                    <li>Agency spending patterns</li>
-                    <li>Payment type distribution</li>
-                    <li>Anomaly detection & fraud analysis</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
+        st.markdown("""
+        <div style="border: 2px solid #fcbf49; border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f8f9fa 0%, #fff8e1 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #fcbf49; margin-bottom: 1rem; font-weight: 600;">💳 Payments Analysis</h4>
+            <p style="color: #333; line-height: 1.5;">Government payment pattern analysis, anomaly detection, and financial 
+            trend identification across agencies and payment types.</p>
+            <ul style="margin-top: 1rem; color: #555; padding-left: 1.2rem;">
+                <li>Payment timeline analysis</li>
+                <li>Agency spending patterns</li>
+                <li>Payment type distribution</li>
+                <li>Anomaly detection & fraud analysis</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
     
     # Enhanced Key Features Section
     st.markdown("---")
@@ -492,7 +506,7 @@ def render_enhanced_homepage(datasets=None):
         - Sparkline indicators for quick insights
         """)
     
-    # Academic Context with enhanced details
+    # Academic Context
     st.markdown("---")
     st.markdown("### 🎓 Academic Excellence & Professional Standards")
     
@@ -517,7 +531,7 @@ def render_enhanced_homepage(datasets=None):
     corporate strategy roles requiring data-driven efficiency optimization.
     """)
     
-    # Enhanced Footer with additional links
+    # Enhanced Footer
     st.markdown("---")
     st.markdown("""
     <div style="text-align: center; color: #666; font-size: 0.9rem; padding: 2rem; background: #f8f9fa; border-radius: 10px;">
@@ -558,36 +572,6 @@ def main():
         # For homepage, try to load datasets for real stats, but don't require them
         if not st.session_state.datasets_loaded:
             with st.spinner("Loading data for real-time metrics..."):
-                try:
-                    st.session_state.datasets = load_datasets_cached()
-                    st.session_state.datasets_loaded = True
-                except Exception as e:
-                    st.warning(f"Could not load real-time data: {e}. Showing demo homepage.")
-                    st.session_state.datasets = None
-        
-        render_enhanced_homepage(st.session_state.datasets)
-    
-    with tabs[1]:
-        # Load datasets if not already loaded
-        if not st.session_state.datasets_loaded:
-            with st.spinner("Loading datasets..."):
-                try:
-                    st.session_state.datasets = load_datasets_cached()
-                    st.session_state.datasets_loaded = True
-                except Exception as e:
-                    st.error(f"Error loading datasets: {e}")
-                    st.session_state.datasets = {
-                        "Contracts": pd.DataFrame(),
-                        "Grants": pd.DataFrame(),
-                        "Leases": pd.DataFrame(),
-                        "Payments": pd.DataFrame()
-                    }
-        
-        render_deep_analysis_tab(st.session_state.datasets)
-    
-    with tabs[2]:
-        if not st.session_state.datasets_loaded:
-            with st.spinner("Loading datasets..."):
                 try:
                     st.session_state.datasets = load_datasets_cached()
                     st.session_state.datasets_loaded = True
@@ -655,3 +639,33 @@ def main():
 
 if __name__ == "__main__":
     main()
+                except Exception as e:
+                    st.warning(f"Could not load real-time data: {e}. Showing demo homepage.")
+                    st.session_state.datasets = None
+        
+        render_enhanced_homepage(st.session_state.datasets)
+    
+    with tabs[1]:
+        # Load datasets if not already loaded
+        if not st.session_state.datasets_loaded:
+            with st.spinner("Loading datasets..."):
+                try:
+                    st.session_state.datasets = load_datasets_cached()
+                    st.session_state.datasets_loaded = True
+                except Exception as e:
+                    st.error(f"Error loading datasets: {e}")
+                    st.session_state.datasets = {
+                        "Contracts": pd.DataFrame(),
+                        "Grants": pd.DataFrame(),
+                        "Leases": pd.DataFrame(),
+                        "Payments": pd.DataFrame()
+                    }
+        
+        render_deep_analysis_tab(st.session_state.datasets)
+    
+    with tabs[2]:
+        if not st.session_state.datasets_loaded:
+            with st.spinner("Loading datasets..."):
+                try:
+                    st.session_state.datasets = load_datasets_cached()
+                    st.session_state.datasets_loaded = True
