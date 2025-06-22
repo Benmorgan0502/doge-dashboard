@@ -13,6 +13,53 @@ def is_cache_fresh(file_path, max_age_hours):
     age_hours = (time.time() - last_modified) / 3600
     return age_hours < max_age_hours
 
+def create_sample_data(dataset_name):
+    """Create sample data when API is unavailable"""
+    if dataset_name == "Contracts":
+        return pd.DataFrame({
+            'piid': [f'CONTRACT_{i}' for i in range(100)],
+            'agency': ['DOD', 'HHS', 'DHS', 'DOT', 'DOE'] * 20,
+            'vendor': [f'Vendor_{i%10}' for i in range(100)],
+            'value': [1000000 + i*50000 for i in range(100)],
+            'savings': [100000 + i*5000 for i in range(100)],
+            'description': [f'Contract description {i}' for i in range(100)],
+            'fpds_status': ['Active', 'Completed', 'Terminated'] * 34,
+            'fpds_link': ['https://fpds.gov'] * 100,
+            'deleted_date': ['2025-01-15', '2025-02-15', '2025-03-15'] * 34
+        })
+    elif dataset_name == "Grants":
+        return pd.DataFrame({
+            'agency': ['NIH', 'NSF', 'DOE', 'EPA', 'USDA'] * 20,
+            'recipient': [f'University_{i%15}' for i in range(100)],
+            'value': [500000 + i*25000 for i in range(100)],
+            'savings': [50000 + i*2500 for i in range(100)],
+            'description': [f'Grant description {i}' for i in range(100)],
+            'link': [f'https://grants.gov/grant_{i}' for i in range(100)],
+            'date': ['2025-01-10', '2025-02-10', '2025-03-10'] * 34
+        })
+    elif dataset_name == "Leases":
+        return pd.DataFrame({
+            'date': ['2025-01-20', '2025-02-20', '2025-03-20'] * 34,
+            'location': [f'City_{i%20}, ST' for i in range(100)],
+            'sq_ft': [1000 + i*100 for i in range(100)],
+            'description': [f'Lease description {i}' for i in range(100)],
+            'value': [200000 + i*10000 for i in range(100)],
+            'savings': [20000 + i*1000 for i in range(100)],
+            'agency': ['GSA', 'DOD', 'VA', 'HHS', 'DHS'] * 20
+        })
+    elif dataset_name == "Payments":
+        return pd.DataFrame({
+            'payment_date': ['2025-01-25', '2025-02-25', '2025-03-25'] * 34,
+            'payment_amt': [75000 + i*5000 for i in range(100)],
+            'agency_name': ['Treasury', 'SSA', 'CMS', 'IRS', 'USDA'] * 20,
+            'award_description': [f'Payment description {i}' for i in range(100)],
+            'fain': [f'FAIN_{i}' for i in range(100)],
+            'recipient_justification': [f'Justification {i}' for i in range(100)],
+            'agency_lead_justification': [f'Agency justification {i}' for i in range(100)],
+            'org_name': [f'Organization_{i%25}' for i in range(100)]
+        })
+    return pd.DataFrame()
+
 def fetch_data(api_url, result_key, cache_file):
     """Fetch data from API with pagination and better error handling"""
     data = []
@@ -107,6 +154,7 @@ def load_from_cache_only(cache_file):
 def load_data(config):
     """Load data from cache or API with enhanced error handling"""
     cache_file = config["cache"]
+    dataset_name = cache_file.split('/')[-1].replace('_cache.csv', '').title()
     
     # Check if cache is fresh
     if is_cache_fresh(cache_file, CACHE_DURATION_HOURS):
@@ -118,16 +166,44 @@ def load_data(config):
             return df
         except Exception as e:
             st.warning(f"⚠️ Error reading cache file, fetching fresh data: {e}")
-            return fetch_data(config["url"], config["result_key"], cache_file)
+            
+    # Cache is stale or doesn't exist, try to fetch fresh data
+    if os.path.exists(cache_file):
+        cache_age = (time.time() - os.path.getmtime(cache_file)) / 3600
+        st.info(f"🔄 Cache is {cache_age:.1f} hours old, fetching fresh data...")
     else:
-        # Cache is stale or doesn't exist, fetch fresh data
-        if os.path.exists(cache_file):
-            cache_age = (time.time() - os.path.getmtime(cache_file)) / 3600
-            st.info(f"🔄 Cache is {cache_age:.1f} hours old, fetching fresh data...")
-        else:
-            st.info("🆕 No cache found, fetching data for the first time...")
+        st.info("🆕 No cache found, fetching data for the first time...")
+    
+    # Try to fetch from API
+    df = fetch_data(config["url"], config["result_key"], cache_file)
+    
+    # If API fails or returns empty data, try to load from stale cache or use sample data
+    if df.empty:
+        st.warning(f"API unavailable for {dataset_name}")
         
-        return fetch_data(config["url"], config["result_key"], cache_file)
+        # Try to load from stale cache first
+        if os.path.exists(cache_file):
+            try:
+                df = pd.read_csv(cache_file)
+                if not df.empty:
+                    st.info(f"📁 Using stale cached data for {dataset_name} - {len(df):,} records")
+                    return df
+            except Exception as e:
+                st.warning(f"Could not load stale cache: {e}")
+        
+        # If no cache available, use sample data for demo
+        st.info(f"Using sample data for {dataset_name} (API and cache unavailable)")
+        df = create_sample_data(dataset_name)
+        
+        # Save sample data to cache for consistency
+        if not df.empty:
+            try:
+                os.makedirs(os.path.dirname(cache_file), exist_ok=True)
+                df.to_csv(cache_file, index=False)
+            except Exception as e:
+                st.warning(f"Could not save sample data to cache: {e}")
+    
+    return df
 
 def load_all_datasets():
     """Load all datasets defined in API_CONFIGS with enhanced progress tracking"""
