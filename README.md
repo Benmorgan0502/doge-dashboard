@@ -3,7 +3,7 @@
 A comprehensive interactive dashboard analyzing Department of Government Efficiency (DOGE) data including contracts, grants, leases, and payments.
 
 ## 🚀 Live Demo
-[**View Dashboard**](https://your-actual-streamlit-url-here.streamlit.app)
+[**View Dashboard**](https://doge-dashboard-qjtq4aq4a9lgdfybax8kh5.streamlit.app/)
 
 ## 🎓 Academic Project
 MSBA Capstone Project - Fairfield University Business Analytics Program
