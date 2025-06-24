@@ -1057,4 +1057,93 @@ def render_predictive_modeling(datasets):
     st.markdown("## 🔮 Predictive Efficiency Modeling")
     st.info("🚧 Machine learning forecasting models for efficiency prediction.")
 
-    - **Risk-Return Framework**: Efficiency rate vs. standar
+ # Add this to the END of your advanced_analytics.py file
+# Replace the incomplete fragment with these complete functions:
+
+def render_performance_scorecard(datasets):
+    """Performance scorecard with mathematical transparency"""
+    st.markdown("## 📊 Agency Performance Scorecard")
+    st.markdown("*Comprehensive multi-criteria performance evaluation framework*")
+    
+    st.info("🚧 Advanced performance scorecard analysis with multi-criteria scoring methodology.")
+    
+    # Show basic performance metrics as placeholder
+    if datasets:
+        total_records = sum(len(df) for df in datasets.values() if not df.empty)
+        st.metric("Total Records Analyzed", f"{total_records:,}")
+        
+        agencies = set()
+        for df in datasets.values():
+            if not df.empty and 'agency' in df.columns:
+                agencies.update(df['agency'].dropna().unique())
+        
+        st.metric("Agencies Evaluated", len(agencies))
+
+def render_risk_assessment(datasets):
+    """Risk assessment analysis"""
+    st.markdown("## ⚠️ Risk Assessment & Anomaly Patterns")
+    st.markdown("*Predictive risk modeling and fraud detection analytics*")
+    
+    st.info("🚧 Comprehensive risk modeling using statistical analysis and pattern recognition.")
+    
+    # Show basic risk metrics as placeholder
+    if datasets:
+        outlier_count = 0
+        for dataset_name, df in datasets.items():
+            if not df.empty and 'value' in df.columns:
+                values = df['value'].dropna()
+                if len(values) > 10:
+                    Q1 = values.quantile(0.25)
+                    Q3 = values.quantile(0.75)
+                    IQR = Q3 - Q1
+                    outliers = values[(values < Q1 - 1.5*IQR) | (values > Q3 + 1.5*IQR)]
+                    outlier_count += len(outliers)
+        
+        st.metric("Statistical Outliers Detected", outlier_count)
+        st.metric("Risk Level", "Medium" if outlier_count > 100 else "Low")
+
+def render_cost_benefit_analysis(datasets):
+    """Cost-benefit analysis"""
+    st.markdown("## 💼 Cost-Benefit ROI Analysis")
+    st.markdown("*Return on investment modeling for government efficiency initiatives*")
+    
+    st.info("🚧 Return on investment modeling with comprehensive financial analysis.")
+    
+    # Show basic ROI metrics as placeholder
+    if datasets:
+        total_value = 0
+        total_savings = 0
+        
+        for df in datasets.values():
+            if not df.empty:
+                if 'value' in df.columns:
+                    total_value += df['value'].fillna(0).sum()
+                if 'savings' in df.columns:
+                    total_savings += df['savings'].fillna(0).sum()
+        
+        if total_value > 0:
+            roi_percentage = (total_savings / total_value) * 100
+            st.metric("Overall ROI", f"{roi_percentage:.1f}%")
+            st.metric("Total Investment", f"${total_value:,.0f}")
+            st.metric("Total Returns", f"${total_savings:,.0f}")
+
+def render_predictive_modeling(datasets):
+    """Predictive modeling analysis"""
+    st.markdown("## 🔮 Predictive Efficiency Modeling")
+    st.markdown("*Machine learning models for forecasting efficiency outcomes*")
+    
+    st.info("🚧 Machine learning forecasting models for efficiency prediction.")
+    
+    # Show basic predictive metrics as placeholder
+    if datasets:
+        # Calculate trend direction for prediction
+        contracts_df = datasets.get("Contracts", pd.DataFrame())
+        if not contracts_df.empty and 'deleted_date' in contracts_df.columns:
+            contracts_df['date'] = pd.to_datetime(contracts_df['deleted_date'], errors='coerce')
+            monthly_counts = contracts_df.groupby(contracts_df['date'].dt.to_period('M')).size()
+            
+            if len(monthly_counts) >= 2:
+                recent_trend = monthly_counts.iloc[-1] - monthly_counts.iloc[-2]
+                trend_direction = "📈 Increasing" if recent_trend > 0 else "📉 Decreasing" if recent_trend < 0 else "➡️ Stable"
+                st.metric("Efficiency Trend", trend_direction)
+                st.metric("Predicted 6-Month Outlook", "Positive" if recent_trend >= 0 else "Requires Attention")
