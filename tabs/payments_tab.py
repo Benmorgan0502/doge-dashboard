@@ -153,72 +153,71 @@ def render_summary_metrics(df):
         st.metric("Unique Agencies", f"{unique_agencies}")
 
 def render_payment_amounts_chart(df):
-    """Chart 1: Payment Amount Distribution"""
+    """Chart 1: Top Recipients by Payment Value"""
     
-    st.markdown("#### 💰 Payment Amount Distribution")
+    st.markdown("#### 🎯 Top Recipients by Total Payment Value")
     
     amount_col = 'payment_amt' if 'payment_amt' in df.columns else None
+    recipient_col = 'org_name' if 'org_name' in df.columns else None
     
-    if amount_col and pd.api.types.is_numeric_dtype(df[amount_col]):
-        # Remove extreme outliers for better visualization
-        Q1 = df[amount_col].quantile(0.25)
-        Q3 = df[amount_col].quantile(0.75)
-        IQR = Q3 - Q1
-        outlier_threshold = Q3 + 3 * IQR  # Use 3x IQR for visualization (more lenient)
+    if amount_col and recipient_col and pd.api.types.is_numeric_dtype(df[amount_col]):
+        # Group by recipient and sum payment amounts
+        recipient_totals = df.groupby(recipient_col)[amount_col].agg(['sum', 'count']).reset_index()
+        recipient_totals.columns = ['Recipient', 'Total_Amount', 'Payment_Count']
         
-        # Create filtered dataset for visualization
-        df_viz = df[df[amount_col] <= outlier_threshold].copy()
-        outliers_removed = len(df) - len(df_viz)
+        # Sort and get top 10
+        top_recipients = recipient_totals.sort_values('Total_Amount', ascending=False).head(10)
         
-        # Create histogram with better binning
-        fig = px.histogram(
-            df_viz, 
-            x=amount_col,
-            nbins=25,
-            title=f"Distribution of Payment Amounts (Excluding {outliers_removed:,} extreme outliers)",
-            labels={amount_col: 'Payment Amount ($)', 'count': 'Number of Payments'},
-            color_discrete_sequence=['#1f77b4']
+        # Create horizontal bar chart
+        fig = px.bar(
+            top_recipients,
+            x='Total_Amount',
+            y='Recipient',
+            orientation='h',
+            title="Top 10 Recipients by Total Payment Value",
+            labels={'Total_Amount': 'Total Payment Amount ($)', 'Recipient': 'Organization'},
+            color='Total_Amount',
+            color_continuous_scale='Blues',
+            hover_data={'Payment_Count': True}
         )
         
-        # Add median and mean lines for the visualization data
-        mean_val = df_viz[amount_col].mean()
-        median_val = df_viz[amount_col].median()
-        
-        fig.add_vline(x=median_val, line_dash="dot", line_color="green", 
-                     annotation_text=f"Median: ${median_val:,.0f}")
-        fig.add_vline(x=mean_val, line_dash="dash", line_color="red", 
-                     annotation_text=f"Mean: ${mean_val:,.0f}")
-        
-        # Format x-axis better
+        # Format and improve layout
         fig.update_layout(
-            height=400, 
-            showlegend=False,
+            height=400,
+            yaxis={'categoryorder': 'total ascending'},
             xaxis_tickformat='$,.0f'
         )
+        
+        # Truncate long organization names for better display
+        fig.update_yaxis(tickmode='array', 
+                        tickvals=list(range(len(top_recipients))),
+                        ticktext=[name[:40] + "..." if len(name) > 40 else name 
+                                for name in top_recipients['Recipient']])
+        
         st.plotly_chart(fig, use_container_width=True)
         
-        # Show additional statistics
+        # Show summary stats
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("Payments Shown", f"{len(df_viz):,}")
+            st.metric("Top Recipient", top_recipients.iloc[0]['Recipient'][:30] + "..." if len(top_recipients.iloc[0]['Recipient']) > 30 else top_recipients.iloc[0]['Recipient'])
         with col2:
-            st.metric("Extreme Outliers", f"{outliers_removed:,}")
+            st.metric("Highest Total", f"${top_recipients.iloc[0]['Total_Amount']:,.0f}")
         with col3:
-            if outliers_removed > 0:
-                max_outlier = df[df[amount_col] > outlier_threshold][amount_col].max()
-                st.metric("Largest Payment", f"${max_outlier:,.0f}")
-            else:
-                st.metric("Largest Payment", f"${df[amount_col].max():,.0f}")
+            st.metric("Total Recipients", f"{len(recipient_totals):,}")
         
-        st.markdown(f"""
-        **Analysis:** This histogram shows the distribution of payment amounts, excluding {outliers_removed:,} extreme outliers 
-        for better visualization. The green dotted line shows the median (middle value), while the red dashed line 
-        shows the mean (average). Most government payments cluster in the lower ranges, with the median being 
-        ${median_val:,.0f} and mean being ${mean_val:,.0f}. Large outlier payments often represent major contracts 
-        or emergency appropriations that require special oversight.
+        st.markdown("""
+        **Analysis:** This chart identifies the organizations receiving the highest total payment values from the government. 
+        Understanding payment concentration helps identify key contractors, vendors, and service providers. 
+        High-value recipients may benefit from streamlined payment processes, while the distribution pattern 
+        reveals dependencies on major suppliers and potential areas for competitive bidding improvements.
         """)
+    
+    elif not recipient_col:
+        st.info("Recipient organization data not available for this analysis.")
+    elif not amount_col:
+        st.info("Payment amount data not available for this analysis.")
     else:
-        st.info("Payment amount data not available for visualization.")
+        st.info("Required data columns not found for recipient analysis.")
 
 def render_agency_payments_chart(df):
     """Chart 2: Top Agencies by Payment Volume"""
