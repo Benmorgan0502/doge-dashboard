@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
-from analysis_modules.executive_summary import render_executive_summary
-from analysis_modules.agency_benchmarking import render_cross_agency_benchmarking
-from analysis_modules.temporal_forecasting import render_temporal_trend_analysis
-from analysis_modules.geographic_patterns import render_geographic_analysis
-from analysis_modules.advanced_analytics import (
+from .analysis_modules.executive_summary import render_executive_summary
+from .analysis_modules.agency_benchmarking import render_cross_agency_benchmarking
+from .analysis_modules.temporal_forecasting import render_temporal_trend_analysis
+from .analysis_modules.geographic_patterns import render_geographic_analysis
+from .analysis_modules.advanced_analytics import (
     render_savings_optimization,
     render_multidimensional_outliers,
     render_correlation_analysis,
