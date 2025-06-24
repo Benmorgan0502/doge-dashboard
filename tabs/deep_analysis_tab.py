@@ -1,29 +1,33 @@
 import streamlit as st
 import pandas as pd
 
-# Import with error handling
+# Direct imports from individual modules (avoiding __init__.py)
 try:
-    from .analysis_modules.executive_summary import render_executive_summary
-except ImportError:
+    from tabs.analysis_modules.executive_summary import render_executive_summary
+except ImportError as e:
+    st.error(f"Could not import executive_summary: {e}")
     render_executive_summary = None
 
 try:
-    from .analysis_modules.agency_benchmarking import render_cross_agency_benchmarking
-except ImportError:
+    from tabs.analysis_modules.agency_benchmarking import render_cross_agency_benchmarking
+except ImportError as e:
+    st.error(f"Could not import agency_benchmarking: {e}")
     render_cross_agency_benchmarking = None
 
 try:
-    from .analysis_modules.temporal_forecasting import render_temporal_trend_analysis
-except ImportError:
+    from tabs.analysis_modules.temporal_forecasting import render_temporal_trend_analysis
+except ImportError as e:
+    st.error(f"Could not import temporal_forecasting: {e}")
     render_temporal_trend_analysis = None
 
 try:
-    from .analysis_modules.geographic_patterns import render_geographic_analysis
-except ImportError:
+    from tabs.analysis_modules.geographic_patterns import render_geographic_analysis
+except ImportError as e:
+    st.error(f"Could not import geographic_patterns: {e}")
     render_geographic_analysis = None
 
 try:
-    from .analysis_modules.advanced_analytics import (
+    from tabs.analysis_modules.advanced_analytics import (
         render_savings_optimization,
         render_multidimensional_outliers,
         render_correlation_analysis,
@@ -32,7 +36,8 @@ try:
         render_cost_benefit_analysis,
         render_predictive_modeling
     )
-except ImportError:
+except ImportError as e:
+    st.error(f"Could not import advanced_analytics: {e}")
     render_savings_optimization = None
     render_multidimensional_outliers = None
     render_correlation_analysis = None
