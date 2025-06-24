@@ -160,28 +160,62 @@ def render_payment_amounts_chart(df):
     amount_col = 'payment_amt' if 'payment_amt' in df.columns else None
     
     if amount_col and pd.api.types.is_numeric_dtype(df[amount_col]):
-        # Create histogram
+        # Remove extreme outliers for better visualization
+        Q1 = df[amount_col].quantile(0.25)
+        Q3 = df[amount_col].quantile(0.75)
+        IQR = Q3 - Q1
+        outlier_threshold = Q3 + 3 * IQR  # Use 3x IQR for visualization (more lenient)
+        
+        # Create filtered dataset for visualization
+        df_viz = df[df[amount_col] <= outlier_threshold].copy()
+        outliers_removed = len(df) - len(df_viz)
+        
+        # Create histogram with better binning
         fig = px.histogram(
-            df, 
+            df_viz, 
             x=amount_col,
-            nbins=30,
-            title="Distribution of Payment Amounts",
+            nbins=25,
+            title=f"Distribution of Payment Amounts (Excluding {outliers_removed:,} extreme outliers)",
             labels={amount_col: 'Payment Amount ($)', 'count': 'Number of Payments'},
             color_discrete_sequence=['#1f77b4']
         )
         
-        # Add mean line
-        mean_val = df[amount_col].mean()
+        # Add median and mean lines for the visualization data
+        mean_val = df_viz[amount_col].mean()
+        median_val = df_viz[amount_col].median()
+        
+        fig.add_vline(x=median_val, line_dash="dot", line_color="green", 
+                     annotation_text=f"Median: ${median_val:,.0f}")
         fig.add_vline(x=mean_val, line_dash="dash", line_color="red", 
                      annotation_text=f"Mean: ${mean_val:,.0f}")
         
-        fig.update_layout(height=400, showlegend=False)
+        # Format x-axis better
+        fig.update_layout(
+            height=400, 
+            showlegend=False,
+            xaxis_tickformat='$,.0f'
+        )
         st.plotly_chart(fig, use_container_width=True)
         
-        st.markdown("""
-        **Analysis:** This histogram shows the distribution of payment amounts across all transactions. 
-        The red dashed line indicates the average payment amount. Most government payments tend to cluster 
-        in specific ranges, with occasional large outlier payments that may require additional scrutiny.
+        # Show additional statistics
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Payments Shown", f"{len(df_viz):,}")
+        with col2:
+            st.metric("Extreme Outliers", f"{outliers_removed:,}")
+        with col3:
+            if outliers_removed > 0:
+                max_outlier = df[df[amount_col] > outlier_threshold][amount_col].max()
+                st.metric("Largest Payment", f"${max_outlier:,.0f}")
+            else:
+                st.metric("Largest Payment", f"${df[amount_col].max():,.0f}")
+        
+        st.markdown(f"""
+        **Analysis:** This histogram shows the distribution of payment amounts, excluding {outliers_removed:,} extreme outliers 
+        for better visualization. The green dotted line shows the median (middle value), while the red dashed line 
+        shows the mean (average). Most government payments cluster in the lower ranges, with the median being 
+        ${median_val:,.0f} and mean being ${mean_val:,.0f}. Large outlier payments often represent major contracts 
+        or emergency appropriations that require special oversight.
         """)
     else:
         st.info("Payment amount data not available for visualization.")
