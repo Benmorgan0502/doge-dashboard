@@ -251,19 +251,13 @@ def calculate_risk_metrics(datasets):
 
 def render_risk_dashboard_fixed(datasets, summary_stats):
     """
-    Render executive risk dashboard with mathematical transparency.
-    
-    Dashboard Components:
-    1. Overall Risk Assessment (composite scoring)
-    2. Risk Indicators (threshold-based analysis)
-    3. Trend Analysis (time-series with variance)
-    4. Action Items (prioritized by risk score)
+    Render executive risk dashboard with improved visibility on dark backgrounds.
     """
     
     st.markdown("### ⚠️ Executive Risk Assessment")
     st.markdown("*Statistical risk analysis using outlier detection and variance assessment*")
     
-    # Calculate risk metrics with mathematical explanation
+    # Calculate risk metrics
     risk_metrics = calculate_risk_metrics(datasets)
     
     # Mathematical methodology explanation
@@ -286,46 +280,47 @@ def render_risk_dashboard_fixed(datasets, summary_stats):
     risk_col1, risk_col2, risk_col3 = st.columns(3)
     
     with risk_col1:
-        # Overall Risk Level with mathematical justification
+        # Overall Risk Level with improved visibility
         risk_level = risk_metrics['overall_risk']
-        risk_color = {'Low': '#28a745', 'Medium': '#ffc107', 'High': '#dc3545'}[risk_level]
+        risk_colors = {'Low': '#28a745', 'Medium': '#ffc107', 'High': '#dc3545'}
+        risk_color = risk_colors[risk_level]
+        risk_class = f"risk-{risk_level.lower()}"
         
         st.markdown(f"""
-        <div style="background: white; border-radius: 10px; padding: 1.5rem; margin: 1rem 0; 
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 5px solid {risk_color};">
-            <h4 style="color: {risk_color}; margin-bottom: 1rem;">
+        <div class="risk-card {risk_class}">
+            <h4 style="color: {risk_color} !important;">
                 🚨 Overall Risk Level: {risk_level}
             </h4>
-            <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin: 0.5rem 0; text-align: center;">
+            <div class="risk-metric-box">
                 <strong>Risk Score: {risk_metrics['risk_score']}/100</strong>
             </div>
-            <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin: 0.5rem 0; text-align: center;">
+            <div class="risk-metric-box">
                 <strong>High-Risk Programs: {risk_metrics['high_risk_count']}</strong>
             </div>
-            <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin: 0.5rem 0; text-align: center;">
+            <div class="risk-metric-box">
                 <strong>Data Quality: {risk_metrics['data_quality']:.1f}%</strong>
             </div>
-            <p style="color: #666; margin-top: 1rem; font-size: 0.9rem;">
+            <p style="color: #666 !important; margin-top: 1rem; font-size: 0.9rem;">
                 Calculated using weighted composite scoring with outlier detection and variance analysis
             </p>
         </div>
         """, unsafe_allow_html=True)
     
     with risk_col2:
-        # Risk Indicators with threshold explanations
+        # Risk Indicators with better contrast
         st.markdown("#### 📊 Risk Indicators")
         st.markdown("*Current levels vs. statistical warning thresholds*")
         
-        # Create risk indicators with mathematical context
+        # Create risk indicators DataFrame
         risk_indicators = pd.DataFrame({
             'Indicator': ['Budget\nVariance', 'Timeline\nDelays', 'Quality\nIssues', 'Non-Compliance'],
             'Current': [
                 risk_metrics['budget_variance'], 
                 risk_metrics['timeline_delays'], 
                 risk_metrics['quality_issues'], 
-                100 - risk_metrics['compliance_rate']  # Show non-compliance rate
+                100 - risk_metrics['compliance_rate']
             ],
-            'Threshold': [15, 25, 10, 10],  # Statistical warning thresholds
+            'Threshold': [15, 25, 10, 10],
             'Calculation': [
                 '|Actual Rate - 15%|',
                 'Base + Outlier Impact',
@@ -334,7 +329,7 @@ def render_risk_dashboard_fixed(datasets, summary_stats):
             ]
         })
         
-        # Color-coded bar chart
+        # Create color-coded bar chart with better visibility
         fig_risk = go.Figure()
         
         # Color coding based on threshold comparison
@@ -354,19 +349,21 @@ def render_risk_dashboard_fixed(datasets, summary_stats):
             marker_color=colors,
             text=[f"{val:.1f}%" for val in risk_indicators['Current']],
             textposition='auto',
+            textfont=dict(color='white', size=12, family='Arial Black'),
             hovertemplate='<b>%{x}</b><br>Current: %{y:.1f}%<br>Calculation: %{customdata}<extra></extra>',
             customdata=risk_indicators['Calculation']
         ))
         
-        # Warning threshold markers
+        # Warning threshold markers with better visibility
         fig_risk.add_trace(go.Scatter(
             name='Warning Threshold',
             x=risk_indicators['Indicator'],
             y=risk_indicators['Threshold'],
             mode='markers',
-            marker=dict(color='orange', size=12, symbol='diamond'),
+            marker=dict(color='orange', size=15, symbol='diamond', line=dict(width=2, color='white')),
             text=[f"Threshold: {val}%" for val in risk_indicators['Threshold']],
-            textposition='top center'
+            textposition='top center',
+            textfont=dict(color='white', size=10)
         ))
         
         fig_risk.update_layout(
@@ -374,20 +371,25 @@ def render_risk_dashboard_fixed(datasets, summary_stats):
             margin=dict(l=0, r=0, t=20, b=0),
             showlegend=True,
             yaxis_title="Risk Level (%)",
-            yaxis=dict(range=[0, max(max(risk_indicators['Current']), max(risk_indicators['Threshold'])) + 5])
+            yaxis=dict(range=[0, max(max(risk_indicators['Current']), max(risk_indicators['Threshold'])) + 5]),
+            plot_bgcolor='rgba(255,255,255,0.9)',
+            paper_bgcolor='rgba(255,255,255,0.9)',
+            font=dict(color='#333', size=12),
+            xaxis=dict(tickfont=dict(color='#333')),
+            yaxis=dict(tickfont=dict(color='#333'))
         )
         st.plotly_chart(fig_risk, use_container_width=True, config={'displayModeBar': False})
     
     with risk_col3:
-        # Risk trend with variance calculation
+        # Risk trend with better visibility
         st.markdown("#### 📈 6-Month Risk Trend")
         st.markdown("*Temporal variance with statistical bounds*")
         
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
         base_risk = risk_metrics['risk_score']
         
-        # Generate realistic trend with controlled variance
-        np.random.seed(42)  # Reproducible results
+        # Generate realistic trend
+        np.random.seed(42)
         risk_trend = []
         
         for i, month in enumerate(months):
@@ -396,36 +398,37 @@ def render_risk_dashboard_fixed(datasets, summary_stats):
             elif i == len(months) - 1:
                 risk_trend.append(base_risk)
             else:
-                # Add controlled variation: mean=0, std=3
                 variation = np.random.normal(0, 3)
                 new_val = risk_trend[-1] + variation
                 risk_trend.append(max(5, min(80, new_val)))
         
         fig_trend = go.Figure()
         
-        # Main trend line
+        # Main trend line with better visibility
         fig_trend.add_trace(go.Scatter(
             x=months, 
             y=risk_trend,
             mode='lines+markers',
             fill='tozeroy',
-            line=dict(color='#ffc107', width=3),
-            marker=dict(size=8, color='#ffc107'),
+            line=dict(color='#ffc107', width=4),
+            marker=dict(size=10, color='#ffc107', line=dict(width=2, color='white')),
             name='Risk Score',
             text=[f"Score: {val:.1f}<br>Month: {month}" for val, month in zip(risk_trend, months)],
             hovertemplate='<b>%{text}</b><br>Calculated using variance-weighted averaging<extra></extra>'
         ))
         
-        # Statistical threshold
+        # High risk threshold line
         fig_trend.add_hline(
             y=70, 
             line_dash="dash", 
             line_color="red", 
+            line_width=3,
             annotation_text="High Risk Threshold (70)",
-            annotation_position="top right"
+            annotation_position="top right",
+            annotation=dict(font=dict(color='red', size=12))
         )
         
-        # Confidence bounds (±5 points)
+        # Confidence bounds
         upper_bound = [min(100, val + 5) for val in risk_trend]
         lower_bound = [max(0, val - 5) for val in risk_trend]
         
@@ -433,7 +436,7 @@ def render_risk_dashboard_fixed(datasets, summary_stats):
             x=months + months[::-1],
             y=upper_bound + lower_bound[::-1],
             fill='toself',
-            fillcolor='rgba(255, 193, 7, 0.2)',
+            fillcolor='rgba(255, 193, 7, 0.3)',
             line=dict(color='rgba(255,255,255,0)'),
             name='95% Confidence Interval',
             showlegend=False
@@ -444,43 +447,111 @@ def render_risk_dashboard_fixed(datasets, summary_stats):
             margin=dict(l=0, r=0, t=20, b=0),
             yaxis_title="Risk Score (0-100)",
             yaxis=dict(range=[0, 100]),
-            showlegend=False
+            showlegend=False,
+            plot_bgcolor='rgba(255,255,255,0.9)',
+            paper_bgcolor='rgba(255,255,255,0.9)',
+            font=dict(color='#333', size=12),
+            xaxis=dict(tickfont=dict(color='#333')),
+            yaxis=dict(tickfont=dict(color='#333'))
         )
         st.plotly_chart(fig_trend, use_container_width=True, config={'displayModeBar': False})
     
-    # Priority Actions with mathematical justification
+    # Priority Actions with better visibility
     st.markdown("#### 🎯 Priority Risk Actions")
     st.markdown("*Action prioritization based on risk score weighting and impact analysis*")
     
     action_col1, action_col2 = st.columns(2)
     
     with action_col1:
-        st.markdown("**🔴 Immediate Actions (High Priority)**")
-        st.markdown("*Risk Score Impact: 15-25 point reduction*")
+        st.markdown("""
+        <div class="strategic-insights">
+            <h4>🔴 Immediate Actions (High Priority)</h4>
+            <p><em>Risk Score Impact: 15-25 point reduction</em></p>
+            <ul>
+                <li>Investigate {} high-risk programs (IQR outliers > Q3 + 1.5×IQR)</li>
+                <li>Address data quality issues affecting {:.1f}% of records</li>
+                <li>Review agencies with budget variance >{:.1f}% from 15% baseline</li>
+                <li>Monitor {:.1f}% timeline-delayed projects (outlier-adjusted)</li>
+            </ul>
+        </div>
+        """.format(
+            risk_metrics['high_risk_count'],
+            100-risk_metrics['data_quality'],
+            risk_metrics['budget_variance'],
+            risk_metrics['timeline_delays']
+        ), unsafe_allow_html=True)
+    
+    # Render risk dashboard
+    render_risk_dashboard_fixed(datasets, summary_stats)
+    
+    # Executive recommendations
+    st.markdown("---")
+    st.markdown("### 🚀 Executive Recommendations")
+    st.markdown("*Data-driven action items prioritized by impact and feasibility*")
+    
+    rec_col1, rec_col2 = st.columns(2)
+    
+    with rec_col1:
+        st.success("""
+        ✅ **Immediate Opportunities (0-30 days)**
         
-        immediate_actions = [
-            f"Investigate {risk_metrics['high_risk_count']} high-risk programs (IQR outliers > Q3 + 1.5×IQR)",
-            f"Address data quality issues affecting {100-risk_metrics['data_quality']:.1f}% of records",
-            f"Review agencies with budget variance >{risk_metrics['budget_variance']:.1f}% from 15% baseline",
-            f"Monitor {risk_metrics['timeline_delays']:.1f}% timeline-delayed projects (outlier-adjusted)"
-        ]
+        1. **Scale Best Practices**: Replicate top-performing agency methods across underperforming units
+        2. **Address Data Gaps**: Implement standardized reporting for payment processing systems
+        3. **Accelerate High-ROI Programs**: Increase investment in contract optimization initiatives
+        4. **Risk Mitigation**: Investigate flagged outlier programs within 48 hours
         
-        for action in immediate_actions:
-            st.markdown(f"• {action}")
+        **Expected Impact**: 15-25% efficiency improvement, $2-5M additional savings
+        """)
+    
+    with rec_col2:
+        st.info("""
+        📈 **Strategic Initiatives (30-90 days)**
+        
+        1. **Geographic Optimization**: Focus expansion on high-efficiency regions
+        2. **Cross-Program Integration**: Leverage correlation insights for portfolio optimization
+        3. **Predictive Analytics**: Implement early warning systems for risk detection
+        4. **Performance Benchmarking**: Establish quarterly efficiency scorecards
+        
+        **Expected Impact**: 10-15% sustained improvement, enhanced oversight capabilities
+        """)
+    
+    # Technical validation footer
+    st.markdown("---")
+    st.markdown("""
+    ### 📚 Analysis Validation & Methodology
+    
+    **Statistical Framework:**
+    - **Sample Size**: {:,} records across {} agencies (sufficient for statistical significance)
+    - **Confidence Level**: 95% for all inferential statistics and trend projections
+    - **Data Quality**: {:.1f}% complete records with outlier detection and validation
+    - **Methodology**: Peer-reviewed business intelligence standards with mathematical transparency
+    
+    **Risk Assessment:**
+    - **Outlier Detection**: IQR method with 1.5× multiplier (conservative approach)
+    - **Risk Scoring**: Weighted composite methodology with empirically validated factors
+    - **Trend Analysis**: 6-month moving averages with statistical confidence intervals
+    - **Performance Metrics**: Cross-validated using multiple measurement approaches
+    
+    *All calculations documented for reproducibility and academic peer review.*
+    """.format(
+        summary_stats['total_records'],
+        summary_stats['unique_agencies'],
+        92.5  # Placeholder data quality percentage
+    ))True)
     
     with action_col2:
-        st.markdown("**🟡 Medium-Term Actions (30-90 days)**")
-        st.markdown("*Risk Score Impact: 5-15 point reduction*")
-        
-        medium_actions = [
-            "Standardize reporting protocols (improves data quality score)",
-            "Implement predictive risk modeling (early warning system)",
-            "Establish quarterly statistical reviews (variance monitoring)",
-            f"Address {100-risk_metrics['compliance_rate']:.1f}% non-compliance gap"
-        ]
-        
-        for action in medium_actions:
-            st.markdown(f"• {action}")
+        st.markdown("""
+        <div class="strategic-insights">
+            <h4>🟡 Medium-Term Actions (30-90 days)</h4>
+            <p><em>Risk Score Impact: 5-15 point reduction</em></p>
+            <ul>
+                <li>Standardize reporting protocols (improves data quality score)</li>
+                <li>Implement predictive risk modeling (early warning system)</li>
+                <li>Establish quarterly statistical reviews (variance monitoring)</li>
+                <li>Address {:.1f}% non-compliance gap</li>
+            </ul>
+        </div>
+        """.format(100-risk_metrics['compliance_rate']), unsafe_allow_html=True)
 
 def render_executive_summary(datasets):
     """
@@ -493,14 +564,125 @@ def render_executive_summary(datasets):
     st.markdown("## 📈 Executive Summary")
     st.markdown("*Strategic overview using statistical analysis and predictive modeling*")
     
-    # CSS for professional styling
+    # IMPROVED CSS for better visibility on dark backgrounds
     st.markdown("""
     <style>
-    .executive-summary h4 { color: #333 !important; }
-    .executive-summary p { color: #555 !important; }
-    .executive-summary li { color: #666 !important; }
+    /* Fix text visibility issues */
+    .stApp {
+        background-color: #0e1117;
+    }
+    
+    /* Risk dashboard specific fixes */
+    .risk-card {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        border-left: 5px solid #ffc107;
+        color: #333 !important;
+    }
+    
+    .risk-card h4 {
+        color: #333 !important;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .risk-card p {
+        color: #555 !important;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .risk-metric-box {
+        background: #f8f9fa !important;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        text-align: center;
+        border: 1px solid #dee2e6;
+    }
+    
+    .risk-metric-box strong {
+        color: #333 !important;
+        font-size: 1.1rem;
+    }
+    
+    /* Strategic insights boxes */
     .strategic-insights {
-        background: #f8f9fa; border-radius: 10px; padding: 1.5rem; margin: 1rem 0;
+        background: rgba(248, 249, 250, 0.95) !important;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .strategic-insights h4 {
+        color: #333 !important;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .strategic-insights p {
+        color: #555 !important;
+        line-height: 1.6;
+    }
+    
+    .strategic-insights li {
+        color: #666 !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    .strategic-insights strong {
+        color: #333 !important;
+    }
+    
+    /* Plotly chart text fixes */
+    .js-plotly-plot .plotly .main-svg {
+        background: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    /* Risk level specific colors */
+    .risk-high {
+        border-left-color: #dc3545 !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+    }
+    
+    .risk-medium {
+        border-left-color: #ffc107 !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+    }
+    
+    .risk-low {
+        border-left-color: #28a745 !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+    }
+    
+    /* Section headers */
+    .main h1, .main h2, .main h3, .main h4 {
+        color: #ffffff !important;
+    }
+    
+    /* Regular text */
+    .main p, .main li {
+        color: #ffffff !important;
+    }
+    
+    /* Metric labels */
+    .metric-container label {
+        color: #ffffff !important;
+    }
+    
+    /* Info/warning/success boxes */
+    .stAlert > div {
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        color: #333 !important;
+    }
+    
+    .stAlert strong {
+        color: #333 !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -590,62 +772,4 @@ def render_executive_summary(datasets):
             summary_stats['outlier_percentage'],
             summary_stats['data_gap_areas'],
             summary_stats['monthly_impact']
-        ), unsafe_allow_html=True)
-    
-    # Render risk dashboard
-    render_risk_dashboard_fixed(datasets, summary_stats)
-    
-    # Executive recommendations
-    st.markdown("---")
-    st.markdown("### 🚀 Executive Recommendations")
-    st.markdown("*Data-driven action items prioritized by impact and feasibility*")
-    
-    rec_col1, rec_col2 = st.columns(2)
-    
-    with rec_col1:
-        st.success("""
-        ✅ **Immediate Opportunities (0-30 days)**
-        
-        1. **Scale Best Practices**: Replicate top-performing agency methods across underperforming units
-        2. **Address Data Gaps**: Implement standardized reporting for payment processing systems
-        3. **Accelerate High-ROI Programs**: Increase investment in contract optimization initiatives
-        4. **Risk Mitigation**: Investigate flagged outlier programs within 48 hours
-        
-        **Expected Impact**: 15-25% efficiency improvement, $2-5M additional savings
-        """)
-    
-    with rec_col2:
-        st.info("""
-        📈 **Strategic Initiatives (30-90 days)**
-        
-        1. **Geographic Optimization**: Focus expansion on high-efficiency regions
-        2. **Cross-Program Integration**: Leverage correlation insights for portfolio optimization
-        3. **Predictive Analytics**: Implement early warning systems for risk detection
-        4. **Performance Benchmarking**: Establish quarterly efficiency scorecards
-        
-        **Expected Impact**: 10-15% sustained improvement, enhanced oversight capabilities
-        """)
-    
-    # Technical validation footer
-    st.markdown("---")
-    st.markdown("""
-    ### 📚 Analysis Validation & Methodology
-    
-    **Statistical Framework:**
-    - **Sample Size**: {:,} records across {} agencies (sufficient for statistical significance)
-    - **Confidence Level**: 95% for all inferential statistics and trend projections
-    - **Data Quality**: {:.1f}% complete records with outlier detection and validation
-    - **Methodology**: Peer-reviewed business intelligence standards with mathematical transparency
-    
-    **Risk Assessment:**
-    - **Outlier Detection**: IQR method with 1.5× multiplier (conservative approach)
-    - **Risk Scoring**: Weighted composite methodology with empirically validated factors
-    - **Trend Analysis**: 6-month moving averages with statistical confidence intervals
-    - **Performance Metrics**: Cross-validated using multiple measurement approaches
-    
-    *All calculations documented for reproducibility and academic peer review.*
-    """.format(
-        summary_stats['total_records'],
-        summary_stats['unique_agencies'],
-        92.5  # Placeholder data quality percentage
-    ))
+        ), unsafe_allow_html=
