@@ -168,17 +168,22 @@ def render_payment_amounts_chart(df):
         # Sort and get top 10
         top_recipients = recipient_totals.sort_values('Total_Amount', ascending=False).head(10)
         
+        # Truncate long organization names before plotting
+        top_recipients['Recipient_Short'] = top_recipients['Recipient'].apply(
+            lambda x: x[:40] + "..." if len(str(x)) > 40 else str(x)
+        )
+        
         # Create horizontal bar chart
         fig = px.bar(
             top_recipients,
             x='Total_Amount',
-            y='Recipient',
+            y='Recipient_Short',
             orientation='h',
             title="Top 10 Recipients by Total Payment Value",
-            labels={'Total_Amount': 'Total Payment Amount ($)', 'Recipient': 'Organization'},
+            labels={'Total_Amount': 'Total Payment Amount ($)', 'Recipient_Short': 'Organization'},
             color='Total_Amount',
             color_continuous_scale='Blues',
-            hover_data={'Payment_Count': True}
+            hover_data={'Payment_Count': True, 'Recipient': True}
         )
         
         # Format and improve layout
@@ -188,18 +193,14 @@ def render_payment_amounts_chart(df):
             xaxis_tickformat='$,.0f'
         )
         
-        # Truncate long organization names for better display
-        fig.update_yaxis(tickmode='array', 
-                        tickvals=list(range(len(top_recipients))),
-                        ticktext=[name[:40] + "..." if len(name) > 40 else name 
-                                for name in top_recipients['Recipient']])
-        
         st.plotly_chart(fig, use_container_width=True)
         
         # Show summary stats
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("Top Recipient", top_recipients.iloc[0]['Recipient'][:30] + "..." if len(top_recipients.iloc[0]['Recipient']) > 30 else top_recipients.iloc[0]['Recipient'])
+            top_name = str(top_recipients.iloc[0]['Recipient'])
+            display_name = top_name[:30] + "..." if len(top_name) > 30 else top_name
+            st.metric("Top Recipient", display_name)
         with col2:
             st.metric("Highest Total", f"${top_recipients.iloc[0]['Total_Amount']:,.0f}")
         with col3:
